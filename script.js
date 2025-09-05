@@ -343,10 +343,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('diaryModal');
     if (!modal) return;
     const body = modal.querySelector('.diary-body');
+    const media = (entry?.media || []).map(m => {
+      if (m.type === 'video') {
+        return `<video src="${m.src}" ${m.poster ? `poster="${m.poster}"` : ''} controls style="width:100%;margin-top:10px"></video>`;
+      }
+      return `<img src="${m.src}" alt="${m.caption || ''}" style="max-width:100%;border-radius:8px;margin-top:10px"/>`;
+    }).join('');
     body.innerHTML = `
       <h3>${entry?.title ? escapeHtml(entry.title) : 'No entry yet'}</h3>
       <p style="color:#444;margin-top:-4px">${iso}${entry?.mood ? ` • ${escapeHtml(entry.mood)}`:''}</p>
       <div>${entry?.content ? escapeHtml(entry.content).replaceAll('\n','<br/>') : '<em>Click this day later when you write something here.</em>'}</div>
+      ${media}
     `;
     modal.classList.add('open');
     modal.setAttribute('aria-hidden','false');
