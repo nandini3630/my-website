@@ -190,6 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (item.poster) media.poster = item.poster;
           media.controls = true;
         } else {
+          const box = document.createElement('div');
+          box.className = 'media-box';
           media = document.createElement('img');
           media.src = item.src;
           media.alt = item.caption || 'Photo';
@@ -201,8 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
             openLightbox(full);
           });
           media.style.cursor = 'zoom-in';
+          box.appendChild(media);
+          wrap.appendChild(box);
         }
-        wrap.appendChild(media);
+        if (item.type === 'video') wrap.appendChild(media);
         if (item.caption) {
           const cap = document.createElement('div');
           cap.className = 'caption';
