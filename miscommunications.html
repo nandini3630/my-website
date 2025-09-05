@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Miscommunications • For My Love</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none">❤ For Us</a></div>
+    <div class="nav-links">
+      <a href="messages.html">Messages</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="miscommunications.html" aria-current="page">Miscommunications</a>
+      <a href="diary.html">Diary</a>
+    </div>
+    <button id="audioToggle" class="audio-btn">▶ Our Song</button>
+  </nav>
+
+  <header class="hero">
+    <h1>Fights, Mistakes, and How We Grew</h1>
+    <p>Learning to understand, forgive, and grow together.</p>
+    <div class="toolbar">
+      <label>
+        <span style="color:var(--muted);font-size:14px">Sort</span>
+        <select id="journeySort">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="title">Title</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main class="section">
+    <div id="journeyList" class="accordion"></div>
+  </main>
+
+  <footer class="site-footer"><p>Made with ❤</p></footer>
+  <audio id="song" preload="auto"><source src="assets/audio/song.mp3" type="audio/mpeg"></audio>
+  <script src="script.js"></script>
+  <script>window.PAGE = 'miscommunications';</script>
+</body>
+</html>
+

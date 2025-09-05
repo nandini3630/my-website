@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "id": "g1",
+      "type": "image",
+      "src": "assets/images/sample-1.jpg",
+      "width": 1080,
+      "height": 1350,
+      "caption": "First selfie together",
+      "date": null
+    },
+    {
+      "id": "g2",
+      "type": "image",
+      "src": "assets/images/sample-2.jpg",
+      "width": 1200,
+      "height": 800,
+      "caption": "Coffee date",
+      "date": null
+    },
+    {
+      "id": "g3",
+      "type": "video",
+      "src": "assets/videos/sample-1.mp4",
+      "poster": "assets/images/sample-video-poster.jpg",
+      "caption": "Laughs that I live for",
+      "date": null
+    }
+  ]
+}
+

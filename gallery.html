@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery • For My Love</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none">❤ For Us</a></div>
+    <div class="nav-links">
+      <a href="messages.html">Messages</a>
+      <a href="gallery.html" aria-current="page">Gallery</a>
+      <a href="miscommunications.html">Miscommunications</a>
+      <a href="diary.html">Diary</a>
+    </div>
+    <button id="audioToggle" class="audio-btn">▶ Our Song</button>
+  </nav>
+
+  <header class="hero">
+    <h1>Memories Gallery</h1>
+    <p>Our favorite photos and videos in a beautiful mosaic.</p>
+    <div class="toolbar">
+      <label>
+        <span style="color:var(--muted);font-size:14px">Sort</span>
+        <select id="gallerySort">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+        </select>
+      </label>
+      <label>
+        <span style="color:var(--muted);font-size:14px">Type</span>
+        <select id="galleryType">
+          <option value="all">All</option>
+          <option value="image">Images</option>
+          <option value="video">Videos</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main class="section">
+    <div id="galleryMasonry" class="masonry"></div>
+  </main>
+
+  <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="Media viewer">
+    <button class="lightbox-close" aria-label="Close">×</button>
+    <div class="lightbox-body"></div>
+  </div>
+
+  <footer class="site-footer"><p>Made with ❤</p></footer>
+  <audio id="song" preload="auto"><source src="assets/audio/song.mp3" type="audio/mpeg"></audio>
+  <script src="script.js"></script>
+  <script>window.PAGE = 'gallery';</script>
+</body>
+</html>
+

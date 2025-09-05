@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>For My Love</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <div class="logo">❤ For Us</div>
+      <div class="nav-links">
+        <a href="messages.html">Messages</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="miscommunications.html">Miscommunications</a>
+        <a href="diary.html">Diary</a>
+      </div>
+      <button id="audioToggle" class="audio-btn" aria-label="Play our song">▶ Our Song</button>
+    </nav>
+    <section class="hero">
+      <h1>Every beat says your name</h1>
+      <p>A little home for our words, smiles, and the journey we share.</p>
+      <a href="#messages" class="cta">Read your messages</a>
+    </section>
+  </header>
+
+  <main>
+    <section id="messages" class="section">
+      <div class="section-head">
+        <h2>Heart Messages</h2>
+        <p>Notes from you that I keep close to my heart.</p>
+      </div>
+      <div id="messagesGrid" class="cards-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="gallery" class="section alt">
+      <div class="section-head">
+        <h2>Memories Gallery</h2>
+        <p>Photos and videos that make us smile.</p>
+      </div>
+      <div id="galleryMasonry" class="masonry" aria-live="polite"></div>
+    </section>
+
+    <section id="journey" class="section">
+      <div class="section-head">
+        <h2>Fights, Mistakes, and How We Grew</h2>
+        <p>Because love is learning to understand, forgive, and grow.</p>
+      </div>
+      <div id="journeyList" class="accordion" aria-live="polite"></div>
+    </section>
+
+    <section id="timeline" class="section alt">
+      <div class="section-head">
+        <h2>Our Timeline</h2>
+        <p>Milestones, big and small.</p>
+      </div>
+      <ul class="timeline" id="timelineList">
+        <li>
+          <span class="dot"></span>
+          <div class="content">
+            <h3>We started this page</h3>
+            <p>Just the beginning. We will keep adding our memories here.</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Made with ❤, patience, and endless gratitude.</p>
+  </footer>
+
+  <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="Media viewer">
+    <button class="lightbox-close" aria-label="Close">×</button>
+    <div class="lightbox-body"></div>
+  </div>
+
+  <audio id="song" preload="auto">
+    <source src="assets/audio/song.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="script.js"></script>
+  <script>
+    // Smooth scroll for anchor links
+    document.addEventListener('click', (e) => {
+      const target = e.target.closest('a[href^="#"]');
+      if (!target) return;
+      e.preventDefault();
+      document.querySelector(target.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
+
