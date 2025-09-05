@@ -16,16 +16,24 @@ body{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-seri
 .cta{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;text-decoration:none;padding:10px 16px;border-radius:12px;box-shadow:0 10px 30px rgba(124,92,255,.25);transition:.25s transform}
 .cta:hover{transform:translateY(-2px)}
 .toolbar{display:flex;gap:16px;justify-content:center;align-items:end;flex-wrap:wrap;margin-top:14px}
+.chips{display:grid;grid-template-columns:1fr;gap:6px;min-width:280px;position:relative}
+.chips-row{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:999px;display:flex;gap:8px;align-items:center}
+.chip button{background:transparent;border:0;color:#fff;cursor:pointer}
+.chips-input{background:var(--card);border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:10px;padding:8px 10px;width:100%}
+.suggestions{display:none;position:absolute;background:var(--card);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px;margin-top:2px;z-index:5;max-height:220px;overflow:auto}
+.suggestion{padding:6px 8px;border-radius:6px;cursor:pointer}
+.suggestion:hover{background:rgba(255,255,255,.08)}
 .section{padding:40px 20px}
 .section.alt{background:var(--bg-alt)}
 .section-head{max-width:980px;margin:0 auto 16px}
 .section-head h2{margin:0 0 4px;font-size:clamp(22px,4.8vw,32px)}
 .section-head p{margin:0;color:var(--muted)}
 .cards-grid{max-width:1100px;margin:16px auto 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
-.card{background:linear-gradient(180deg,rgba(124,92,255,.08),transparent),var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:14px;box-shadow:0 8px 22px rgba(0,0,0,.25);transition:.2s transform,.2s box-shadow}
+.card{background:linear-gradient(180deg,rgba(124,92,255,.08),transparent),var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:14px;box-shadow:0 8px 22px rgba(0,0,0,.25);transition:.2s transform,.2s box-shadow;display:flex;flex-direction:column;min-height:180px;max-height:220px}
 .card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.35)}
 .card h3{margin:4px 0 6px;font-size:16px;color:#fff}
-.card p{white-space:pre-wrap;margin:0;color:#e9ecf6}
+.card p{white-space:pre-wrap;margin:0;color:#e9ecf6;overflow:hidden;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical}
 .tag-row{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
 .tag{font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--muted)}
 .masonry{column-count:1;column-gap:14px;max-width:1200px;margin:16px auto 0}
@@ -48,6 +56,7 @@ body{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-seri
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px}
 .lightbox.open{display:flex}
 .lightbox-body{max-width:min(96vw,1100px);max-height:86vh}
+.lightbox-body{overflow:auto;border-radius:12px}
 .lightbox-body img,.lightbox-body video{max-width:100%;max-height:86vh;border-radius:12px}
 .lightbox-close{position:absolute;top:14px;right:14px;border:0;background:#fff;color:#000;border-radius:999px;width:34px;height:34px;cursor:pointer;font-size:20px;line-height:1}
 

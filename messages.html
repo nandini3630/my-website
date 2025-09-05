@@ -31,16 +31,23 @@
           <option value="title">Title</option>
         </select>
       </label>
-      <label>
-        <span style="color:var(--muted);font-size:14px">Filter tag</span>
-        <input id="messagesTag" placeholder="e.g. love"/>
-      </label>
+      <div class="chips" id="messagesTags">
+        <span style="color:var(--muted);font-size:14px;display:block;margin-bottom:4px">Filter tags</span>
+        <div class="chips-row" id="selectedTags"></div>
+        <input class="chips-input" id="tagInput" placeholder="Type and press Enter…" />
+        <div class="suggestions" id="tagSuggestions" role="listbox"></div>
+      </div>
     </div>
   </header>
 
   <main class="section">
     <div id="messagesGrid" class="cards-grid"></div>
   </main>
+
+  <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="Message viewer">
+    <button class="lightbox-close" aria-label="Close">×</button>
+    <div class="lightbox-body"></div>
+  </div>
 
   <footer class="site-footer"><p>Made with ❤</p></footer>
   <audio id="song" preload="auto"><source src="assets/audio/song.mp3" type="audio/mpeg"></audio>

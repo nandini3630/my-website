@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   lightboxClose?.addEventListener('click', closeLightbox);
   lightbox?.addEventListener('click', (e) => {
-    if (e.target === lightbox) closeLightbox();
+    if (!e.target.closest('.lightbox-body')) closeLightbox();
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
@@ -76,11 +76,64 @@ document.addEventListener('DOMContentLoaded', () => {
   const renderMessages = (data) => {
     const messages = data?.messages || [];
     const sortSel = document.getElementById('messagesSort');
-    const tagInp = document.getElementById('messagesTag');
+    const chipInput = document.getElementById('tagInput');
+    const chipRow = document.getElementById('selectedTags');
+    const suggBox = document.getElementById('tagSuggestions');
+    const allTags = Array.from(new Set(messages.flatMap(m => (m.tags || []).map(t => String(t))))).sort();
+    const selected = new Set();
+    const renderChips = () => {
+      if (!chipRow) return;
+      chipRow.innerHTML = Array.from(selected).map(t => `
+        <span class="chip">${escapeHtml(t)} <button data-x="${escapeHtml(t)}" aria-label="Remove">×</button></span>
+      `).join('');
+      chipRow.querySelectorAll('button[data-x]').forEach(btn => {
+        btn.addEventListener('click', () => { selected.delete(btn.getAttribute('data-x')); applyRender(); renderChips(); });
+      });
+    };
+    const renderSuggestions = (q) => {
+      if (!suggBox) return;
+      if (!q) { suggBox.style.display='none'; suggBox.innerHTML=''; return; }
+      const ql = q.toLowerCase();
+      const matches = allTags.filter(t => t.toLowerCase().includes(ql) && !selected.has(t)).slice(0,8);
+      if (!matches.length) { suggBox.style.display='none'; suggBox.innerHTML=''; return; }
+      suggBox.innerHTML = matches.map(t => `<div class="suggestion" role="option" data-t="${escapeHtml(t)}">${escapeHtml(t)}</div>`).join('');
+      const rect = chipInput.getBoundingClientRect();
+      suggBox.style.display='block';
+      suggBox.style.left = chipInput.offsetLeft + 'px';
+      suggBox.style.top = (chipInput.offsetTop + chipInput.offsetHeight + 2) + 'px';
+      suggBox.style.width = chipInput.offsetWidth + 'px';
+      suggBox.querySelectorAll('.suggestion').forEach(el => {
+        el.addEventListener('click', () => {
+          selected.add(el.getAttribute('data-t'));
+          chipInput.value='';
+          suggBox.style.display='none';
+          renderChips();
+          applyRender();
+        });
+      });
+    };
+    chipInput?.addEventListener('input', (e) => { renderSuggestions(e.target.value); });
+    chipInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const v = (chipInput.value || '').trim();
+        if (v) { selected.add(v); chipInput.value=''; renderChips(); applyRender(); }
+        suggBox.style.display='none';
+      } else if (e.key === 'Backspace' && !chipInput.value && selected.size) {
+        const last = Array.from(selected).pop();
+        selected.delete(last);
+        renderChips();
+        applyRender();
+      }
+    });
     const applyRender = () => {
       let current = [...messages];
-      const tag = (tagInp?.value || '').trim().toLowerCase();
-      if (tag) current = current.filter(m => (m.tags||[]).some(t => String(t).toLowerCase().includes(tag)));
+      if (selected.size) {
+        current = current.filter(m => {
+          const mtags = new Set((m.tags||[]).map(String));
+          for (const t of selected) if (!mtags.has(t)) return false;
+          return true;
+        });
+      }
       const sortBy = sortSel?.value || 'newest';
       current.sort((a,b)=>{
         if (sortBy === 'title') return String(a.title||'').localeCompare(String(b.title||''));
@@ -94,17 +147,25 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       messagesGrid.innerHTML = current.map((m) => {
         const tags = (m.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+        const full = String(m.content || '');
         return `
           <article class="card" tabindex="0">
             <h3>${escapeHtml(m.title || 'Message')}</h3>
-            <p>${escapeHtml(m.content || '')}</p>
+            <p>${escapeHtml(full)}</p>
             <div class="tag-row">${tags}</div>
           </article>
         `;
       }).join('');
+      messagesGrid.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', () => {
+          const body = document.createElement('div');
+          body.innerHTML = card.innerHTML;
+          openLightbox(body);
+        });
+      });
     };
     sortSel?.addEventListener('change', applyRender);
-    tagInp?.addEventListener('input', applyRender);
+    renderChips();
     applyRender();
   };
 
