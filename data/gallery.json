@@ -3,27 +3,107 @@
     {
       "id": "g1",
       "type": "image",
-      "src": "assets/images/sample-1.jpg",
-      "width": 1080,
-      "height": 1350,
-      "caption": "First selfie together",
-      "date": null
+      "src": "assets/images/1.jpg",
+      "width": 1200,
+      "height": 800,
+      "caption": "tatoo",
+      "date": "2025-09-02"
     },
     {
       "id": "g2",
       "type": "image",
-      "src": "assets/images/sample-2.jpg",
+      "src": "assets/images/2.jpg",
       "width": 1200,
       "height": 800,
-      "caption": "Coffee date",
-      "date": null
+      "caption": "spi last day photos",
+      "date": "2025-08-15"
     },
     {
       "id": "g3",
+      "type": "image",
+      "src": "assets/images/3.jpg",
+      "width": 1200,
+      "height": 800,
+      "caption": "heart tatoo image only",
+      "date": "2025-08-15"
+    },
+    {
+      "id": "g4",
+      "type": "image",
+      "src": "assets/images/4.jpg",
+      "width": 1200,
+      "height": 800,
+      "caption": "kalawa together",
+      "date": "2025-08-15"
+    },
+    {
+      "id": "g5",
+      "type": "image",
+      "src": "assets/images/5.jpg",
+      "width": 1200,
+      "height": 800,
+      "caption": "solo at ghar (pooja)",
+      "date": "2025-08-15"
+    },
+    {
+      "id": "g6",
+      "type": "image",
+      "src": "assets/images/6.jpg",
+      "width": 1200,
+      "height": 800,
+      "caption": "solo at weeding",
+      "date": "2025-08-15"
+    },
+    {
+      "id": "g7",
+      "type": "image",
+      "src": "assets/images/7.jpg",
+      "width": 1200,
+      "height": 800,
+      "caption": "last day spi",
+      "date": "2025-08-15"
+    },
+    {
+      "id": "g8",
+      "type": "image",
+      "src": "assets/images/8.png",
+      "width": 1200,
+      "height": 800,
+      "caption": "screenshot",
+      "date": "2025-08-15"
+    },
+    {
+      "id": "g9",
+      "type": "image",
+      "src": "assets/images/9.jpg",
+      "width": 1200,
+      "height": 800,
+      "caption": "mandir",
+      "date": "2025-08-15"
+    },
+    {
+      "id": "g10",
+      "type": "image",
+      "src": "assets/images/10.jpg",
+      "width": 1200,
+      "height": 800,
+      "caption": "with dad",
+      "date": "2025-08-15"
+    },
+    {
+      "id": "g11",
       "type": "video",
-      "src": "assets/videos/sample-1.mp4",
+      "src": "assets/videos/1.mp4",
       "poster": "assets/images/sample-video-poster.jpg",
-      "caption": "Laughs that I live for",
+      "caption": "heart tatoo image only",
+      "date": null
+    },
+    {
+      "id": "g12",
+      "type": "video",
+      "src": "assets/videos/2.mp4",
+      "poster": "assets/images/sample-video-poster.jpg",
+      "caption": "heart tatoo image only",
       "date": null
     }
   ]
