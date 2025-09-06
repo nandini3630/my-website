@@ -7,6 +7,36 @@ document.addEventListener('DOMContentLoaded', () => {
   const audio = document.getElementById('song');
   const audioToggle = document.getElementById('audioToggle');
 
+  // Mobile menu toggle
+  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+  const navLinks = document.querySelector('.nav-links');
+  if (mobileMenuToggle && navLinks) {
+    mobileMenuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      const isOpen = navLinks.classList.contains('open');
+      mobileMenuToggle.setAttribute('aria-expanded', isOpen);
+      mobileMenuToggle.textContent = isOpen ? '✕' : '☰';
+    });
+    
+    // Close menu when clicking on a link
+    navLinks.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A') {
+        navLinks.classList.remove('open');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuToggle.textContent = '☰';
+      }
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!navLinks.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+        navLinks.classList.remove('open');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuToggle.textContent = '☰';
+      }
+    });
+  }
+
   // Lightbox
   const lightbox = document.getElementById('lightbox');
   const lightboxBody = lightbox?.querySelector('.lightbox-body');
