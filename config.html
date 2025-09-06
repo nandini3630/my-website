@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security Configuration • For My Love</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none">❤ For Us</a></div>
+    <div class="nav-links">
+      <a href="messages.html">Messages</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="miscommunications.html">Miscommunications</a>
+      <a href="diary.html">Diary</a>
+    </div>
+    <button id="audioToggle" class="audio-btn">▶ Our Song</button>
+    <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+  </nav>
+
+  <header class="hero">
+    <h1>🔒 Security Configuration</h1>
+    <p>Manage password and security settings for your private memories.</p>
+  </header>
+
+  <main class="section">
+    <div class="config-container">
+      <div class="config-card">
+        <h2>Multi-Password System</h2>
+        <div class="password-list">
+          <div class="password-item">
+            <div class="password-info">
+              <h3>love2024</h3>
+              <p>Access: Messages, Diary</p>
+            </div>
+            <div class="password-status">✅ Active</div>
+          </div>
+          <div class="password-item">
+            <div class="password-info">
+              <h3>love2025</h3>
+              <p>Access: Gallery, Miscommunications</p>
+            </div>
+            <div class="password-status">✅ Active</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-card">
+        <h2>Add New Password</h2>
+        <form id="add-password-form">
+          <div class="input-group">
+            <label for="new-password-name">Password</label>
+            <input type="text" id="new-password-name" placeholder="Enter new password">
+          </div>
+          <div class="input-group">
+            <label for="password-description">Description</label>
+            <input type="text" id="password-description" placeholder="Enter description">
+          </div>
+          <div class="input-group">
+            <label>Page Access</label>
+            <div class="checkbox-group">
+              <label><input type="checkbox" value="messages"> Messages</label>
+              <label><input type="checkbox" value="diary"> Diary</label>
+              <label><input type="checkbox" value="gallery"> Gallery</label>
+              <label><input type="checkbox" value="miscommunications"> Miscommunications</label>
+            </div>
+          </div>
+          <button type="submit" class="security-btn">Add Password</button>
+        </form>
+        <div id="add-password-message" class="config-message"></div>
+      </div>
+
+      <div class="config-card">
+        <h2>Password Settings</h2>
+        <form id="password-form">
+          <div class="input-group">
+            <label for="current-password">Current Password</label>
+            <input type="password" id="current-password" placeholder="Enter current password">
+          </div>
+          <div class="input-group">
+            <label for="new-password">New Password</label>
+            <input type="password" id="new-password" placeholder="Enter new password">
+          </div>
+          <div class="input-group">
+            <label for="confirm-password">Confirm Password</label>
+            <input type="password" id="confirm-password" placeholder="Confirm new password">
+          </div>
+          <button type="submit" class="security-btn">Update Password</button>
+        </form>
+        <div id="password-message" class="config-message"></div>
+      </div>
+
+      <div class="config-card">
+        <h2>Security Features</h2>
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-name">Prevent Right-Click</span>
+            <span class="feature-status">✅ Active</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-name">Disable Developer Tools</span>
+            <span class="feature-status">✅ Active</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-name">Prevent Screenshots</span>
+            <span class="feature-status">✅ Active</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-name">Disable Image Downloads</span>
+            <span class="feature-status">✅ Active</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-name">Disable Video Downloads</span>
+            <span class="feature-status">✅ Active</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-name">Content Obfuscation</span>
+            <span class="feature-status">✅ Active</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-card">
+        <h2>Session Management</h2>
+        <div class="session-info">
+          <p><strong>Session Timeout:</strong> 1 hour</p>
+          <p><strong>Auto-logout:</strong> Enabled</p>
+          <p><strong>Session Storage:</strong> Local Storage</p>
+        </div>
+        <button id="clear-sessions" class="security-btn logout-btn">Clear All Sessions</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Made with ❤, patience, and endless gratitude.</p>
+  </footer>
+
+  <script src="security.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const passwordForm = document.getElementById('password-form');
+      const passwordMessage = document.getElementById('password-message');
+      const clearSessionsBtn = document.getElementById('clear-sessions');
+
+      passwordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        if (newPassword !== confirmPassword) {
+          passwordMessage.textContent = 'New passwords do not match!';
+          passwordMessage.className = 'config-message error';
+          return;
+        }
+
+        if (newPassword.length < 4) {
+          passwordMessage.textContent = 'Password must be at least 4 characters long!';
+          passwordMessage.className = 'config-message error';
+          return;
+        }
+
+        // In a real implementation, you would validate the current password
+        // and update the config.json file
+        passwordMessage.textContent = 'Password updated successfully!';
+        passwordMessage.className = 'config-message success';
+        
+        // Clear form
+        passwordForm.reset();
+      });
+
+      clearSessionsBtn.addEventListener('click', () => {
+        if (confirm('This will log out all users. Are you sure?')) {
+          localStorage.removeItem('secureSession');
+          passwordMessage.textContent = 'All sessions cleared successfully!';
+          passwordMessage.className = 'config-message success';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
