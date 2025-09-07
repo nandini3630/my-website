@@ -180,6 +180,12 @@ class MusicPlayer {
       this.audio.src = track.file;
       this.updateTrackInfo(track);
       
+      // Update Media Session immediately when track changes
+      if (window.mediaSessionManager) {
+        window.mediaSessionManager.updateMetadata(track);
+        console.log('Updated Media Session metadata for:', track.title);
+      }
+      
       // Load the audio with timeout
       const loadPromise = new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
@@ -260,11 +266,14 @@ class MusicPlayer {
       this.isPlaying = true;
       this.updateUI();
       
-      // Show mobile notification with controls when playing
+      // Update Media Session for native phone notifications
       if (window.musicManager) {
         const currentTrack = window.musicManager.getCurrentTrack();
-        if (currentTrack) {
-          window.musicManager.showMobileMusicNotification(currentTrack);
+        if (currentTrack && window.mediaSessionManager) {
+          // Update the native notification with new track info
+          window.mediaSessionManager.updateMetadata(currentTrack);
+          window.mediaSessionManager.updatePlaybackState(true);
+          console.log('Updated native notification for:', currentTrack.title);
         }
       }
       
@@ -330,6 +339,13 @@ class MusicPlayer {
       console.log('Playing previous track:', prevTrack.title);
       this.loadTrack(prevTrack);
       this.play();
+      
+      // Update Media Session for native notification
+      if (window.mediaSessionManager) {
+        window.mediaSessionManager.updateMetadata(prevTrack);
+        window.mediaSessionManager.updatePlaybackState(true);
+        console.log('Updated native notification for previous track:', prevTrack.title);
+      }
     } else {
       console.warn('No previous track available');
       this.showNotification('No previous track', 'warning', 2000);
@@ -347,6 +363,13 @@ class MusicPlayer {
       console.log('Playing next track:', nextTrack.title);
       this.loadTrack(nextTrack);
       this.play();
+      
+      // Update Media Session for native notification
+      if (window.mediaSessionManager) {
+        window.mediaSessionManager.updateMetadata(nextTrack);
+        window.mediaSessionManager.updatePlaybackState(true);
+        console.log('Updated native notification for next track:', nextTrack.title);
+      }
     } else {
       console.warn('No next track available');
       this.showNotification('No next track', 'warning', 2000);

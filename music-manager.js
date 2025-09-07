@@ -520,8 +520,13 @@ class MusicManager {
     if (window.musicPlayer) {
       try {
         await window.musicPlayer.playSong(track);
-        // Show mobile notification with controls when playing
-        this.showMobileMusicNotification(track);
+        
+        // Update Media Session for native notification
+        if (window.mediaSessionManager) {
+          window.mediaSessionManager.updateMetadata(track);
+          window.mediaSessionManager.updatePlaybackState(true);
+          console.log('Updated native notification for track:', track.title);
+        }
       } catch (error) {
         console.error('Error playing track:', error);
         this.showNotification(`Failed to play: ${track.title}`, 'error', 4000);
