@@ -542,6 +542,11 @@ class MusicPlayer {
       }
       placeholder.style.display = 'flex';
     }
+    
+    // Update Media Session for native phone notifications
+    if (window.mediaSessionManager) {
+      window.mediaSessionManager.updateMetadata(track);
+    }
   }
 
   updateUI() {
@@ -567,11 +572,23 @@ class MusicPlayer {
   onPlay() {
     this.isPlaying = true;
     this.updateUI();
+    
+    // Update Media Session for native phone notifications
+    if (window.mediaSessionManager) {
+      window.mediaSessionManager.updatePlaybackState(true);
+      window.mediaSessionManager.startPositionUpdates();
+    }
   }
 
   onPause() {
     this.isPlaying = false;
     this.updateUI();
+    
+    // Update Media Session for native phone notifications
+    if (window.mediaSessionManager) {
+      window.mediaSessionManager.updatePlaybackState(false);
+      window.mediaSessionManager.stopPositionUpdates();
+    }
   }
 
   onEnded() {
@@ -624,6 +641,11 @@ class MusicPlayer {
 
   onTimeUpdate() {
     this.updateProgressDisplay();
+    
+    // Update Media Session position state
+    if (window.mediaSessionManager) {
+      window.mediaSessionManager.updatePositionState();
+    }
   }
 
   onDurationChange() {

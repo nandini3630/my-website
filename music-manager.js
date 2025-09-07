@@ -530,15 +530,9 @@ class MusicManager {
   
   // Show mobile music notification with controls
   showMobileMusicNotification(track) {
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile && track) {
-      // Remove any existing music notifications
-      const existingNotifications = document.querySelectorAll('.notification.persistent');
-      existingNotifications.forEach(notif => notif.remove());
-      
-      // Show new music notification
-      this.showNotification(`Now playing: ${track.title}`, 'playing', 0, { persistent: true });
-    }
+    // Don't show in-app notifications, use native phone notifications instead
+    // The Media Session API will handle the native phone notification
+    console.log('Using native phone notification for:', track.title);
   }
 
   setupEventListeners() {
