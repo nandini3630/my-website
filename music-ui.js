@@ -122,12 +122,17 @@ class MusicUI {
     // Settings form handlers
     const saveSettingsBtn = document.getElementById('saveSettingsBtn');
     const cancelSettingsBtn = document.getElementById('cancelSettingsBtn');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
 
     saveSettingsBtn?.addEventListener('click', () => {
       this.saveSettings();
     });
 
     cancelSettingsBtn?.addEventListener('click', () => {
+      this.closeSettings();
+    });
+
+    closeSettingsBtn?.addEventListener('click', () => {
       this.closeSettings();
     });
   }

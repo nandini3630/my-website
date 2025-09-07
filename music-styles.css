@@ -26,12 +26,28 @@
 
 body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--bg-primary);
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
   color: var(--text-primary);
   overflow: hidden;
   height: 100vh;
   margin: 0;
   padding: 0;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(29, 185, 84, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 77, 126, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(124, 92, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* Security Overlay */
@@ -151,8 +167,9 @@ body {
 /* Sidebar */
 .sidebar {
   width: var(--sidebar-width);
-  background: var(--bg-secondary);
-  border-right: 1px solid var(--border-color);
+  background: linear-gradient(180deg, rgba(24, 24, 24, 0.95) 0%, rgba(18, 18, 18, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   z-index: 10;
@@ -161,6 +178,7 @@ body {
   top: 0;
   height: 100vh;
   transition: transform 0.3s ease;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
 }
 
 .sidebar-header {
@@ -528,8 +546,9 @@ body {
 
 /* Now Playing Bar */
 .now-playing-bar {
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border-color);
+  background: linear-gradient(180deg, rgba(24, 24, 24, 0.95) 0%, rgba(18, 18, 18, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 15px 30px;
   display: flex;
   align-items: center;
@@ -541,6 +560,7 @@ body {
   left: var(--sidebar-width);
   right: 0;
   width: calc(100% - var(--sidebar-width));
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .now-playing-left {
@@ -669,14 +689,59 @@ body {
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 18px;
-  padding: 5px;
+  padding: 8px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.control-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: var(--accent-green);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
 }
 
 .control-btn:hover {
   color: var(--text-primary);
   transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.control-btn:hover::before {
+  width: 100%;
+  height: 100%;
+  background: rgba(29, 185, 84, 0.1);
+}
+
+.control-btn.active {
+  color: var(--accent-green);
+  background: rgba(29, 185, 84, 0.2);
+  transform: scale(1.05);
+}
+
+.control-btn.active::before {
+  width: 100%;
+  height: 100%;
+  background: rgba(29, 185, 84, 0.3);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
 }
 
 .play-pause-btn {
@@ -689,16 +754,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .play-pause-btn:hover {
   background: var(--accent-green);
   color: white;
   transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
 }
 
-.control-btn.active {
-  color: var(--accent-green);
+.play-pause-btn:active {
+  transform: scale(0.95);
 }
 
 .progress-container {
@@ -1042,6 +1110,214 @@ body {
   color: var(--text-primary);
 }
 
+/* Beautiful Notification System with Zigzag Progress */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.notification {
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px 20px;
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  transform: translateX(100%);
+  animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: auto;
+}
+
+.notification.success {
+  border-left: 4px solid var(--accent-green);
+}
+
+.notification.error {
+  border-left: 4px solid #ff4757;
+}
+
+.notification.info {
+  border-left: 4px solid #3742fa;
+}
+
+.notification-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.notification-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.notification-close:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.notification-message {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+/* Zigzag Progress Bar */
+.notification-progress {
+  position: relative;
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.notification-progress::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    var(--accent-green) 0%, 
+    #1ed760 25%, 
+    var(--accent-green) 50%, 
+    #1ed760 75%, 
+    var(--accent-green) 100%);
+  background-size: 20px 100%;
+  animation: zigzag 1s linear infinite;
+  width: 100%;
+  transform: translateX(-100%);
+  animation: progressBar 3s linear forwards;
+}
+
+@keyframes zigzag {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 0; }
+}
+
+@keyframes progressBar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(0%); }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.notification.slide-out {
+  animation: slideOutRight 0.3s ease forwards;
+}
+
+/* Beautiful Loading Animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.loading-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+/* Enhanced Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent-green), #1ed760);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #1ed760, var(--accent-green));
+}
+
+/* Smooth Focus States */
+*:focus {
+  outline: 2px solid var(--accent-green);
+  outline-offset: 2px;
+}
+
+/* Enhanced Button States */
+button:active {
+  transform: scale(0.95);
+}
+
+/* Beautiful Text Selection */
+::selection {
+  background: var(--accent-green);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--accent-green);
+  color: white;
+}
+
 /* Mobile-First Responsive Design */
 @media (max-width: 768px) {
   :root {
@@ -1167,18 +1443,44 @@ body {
   
   .music-item {
     padding: 15px;
-    background: var(--bg-tertiary);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
+    background: linear-gradient(135deg, rgba(40, 40, 40, 0.8) 0%, rgba(30, 30, 30, 0.8) 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .music-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.1) 0%, rgba(255, 77, 126, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+  
+  .music-item:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: rgba(29, 185, 84, 0.3);
+  }
+  
+  .music-item:hover::before {
+    opacity: 1;
   }
   
   .music-item:active {
-    transform: scale(0.98);
-    background: var(--bg-hover);
+    transform: translateY(-2px) scale(0.98);
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.2) 0%, rgba(255, 77, 126, 0.2) 100%);
   }
   
   .music-artwork {

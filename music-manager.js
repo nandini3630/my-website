@@ -319,11 +319,14 @@ class MusicManager {
             try {
               await window.musicPlayer.playSong(song);
               console.log('Song playing successfully');
+              this.showNotification(`Now playing: ${song.title}`, 'success', 2000);
             } catch (error) {
               console.error('Error playing song:', error);
+              this.showNotification('Failed to play song', 'error', 3000);
             }
           } else {
             console.error('Music player not available after waiting');
+            this.showNotification('Music player not ready', 'error', 3000);
           }
         }
       });
@@ -351,11 +354,14 @@ class MusicManager {
               try {
                 await window.musicPlayer.playSong(song);
                 console.log('Song playing successfully');
+                this.showNotification(`Now playing: ${song.title}`, 'success', 2000);
               } catch (error) {
                 console.error('Error playing song:', error);
+                this.showNotification('Failed to play song', 'error', 3000);
               }
             } else {
               console.error('Music player not available after waiting');
+              this.showNotification('Music player not ready', 'error', 3000);
             }
           }
         }
@@ -397,6 +403,67 @@ class MusicManager {
   // Public API methods
   getLibrary() {
     return this.musicLibrary;
+  }
+
+  // Beautiful notification system
+  showNotification(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('notificationContainer');
+    if (!container) return;
+
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    const icons = {
+      success: '✅',
+      error: '❌',
+      info: 'ℹ️',
+      warning: '⚠️'
+    };
+
+    notification.innerHTML = `
+      <div class="notification-header">
+        <div class="notification-title">${icons[type] || icons.info} ${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+        <button class="notification-close">×</button>
+      </div>
+      <div class="notification-message">${message}</div>
+      <div class="notification-progress"></div>
+    `;
+
+    // Add close functionality
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', () => {
+      this.removeNotification(notification);
+    });
+
+    // Auto remove after duration
+    setTimeout(() => {
+      this.removeNotification(notification);
+    }, duration);
+
+    container.appendChild(notification);
+
+    // Remove after animation
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.classList.add('slide-out');
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }
+    }, duration - 300);
+  }
+
+  removeNotification(notification) {
+    if (notification && notification.parentNode) {
+      notification.classList.add('slide-out');
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }
   }
 
   getLibraryStats() {
