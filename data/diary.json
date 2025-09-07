@@ -2,39 +2,48 @@
   "entries": [
     {
       "date": "2025-08-07",
-      "title": "First met",
-      "mood": "Neutral",
+      "title": "First encounter",
+      "mood": "Surprised",
       "content": "The day we met my heart took flight \n Your Haryanvi tone just felt so right.\n I judged too soon led by the crowd \n But I'm glad I was wrong—so deeply proud.",
       "highlight": false,
       "media": [
       ]
     },
     {
-      "date": "2025-02-14",
-      "title": "Valentine's little moments",
-      "mood": "grateful",
-      "content": "We didn't need anything fancy. Your smile did all the magic.",
-      "highlight": false,
+      "date": "2025-08-08",
+      "title": "Breaking Misconceptions",
+      "mood": "Guilty",
+      "content": "Today, I kept my distance because I had already built an image of you in my mind. But when I was leaving at 5:30 pm, you said something that shattered my misconception. I realized you don’t have an attitude problem at all you actually have a very sweet heart.",
+      "highlight": false
+    },
+    {
+      "date": "2025-08-09",
+      "title": "A Hint",
+      "mood": "Confused",
+      "content": "This day I got a hint from you but.. maine notice nhi kiya kuki.... you already said me bhaiya in our first meet.",
+      "highlight": true
+    },
+    {
+      "date": "2025-08-12",
+      "title": "Chocolate",
+      "mood": "Validated",
+      "content": "I took a chocolate for you to just see your reaction and start a conversation to see.... what is it.. bro.. and then you actually said things.. like... 'ye haye usually sbke liye nhi kerti and all' that's hit me.. but still vohi feeling that maybe you are just comfortable around me as a big brother so, I again stopped myself.",
+      "highlight": true
+    },
+    {
+      "date": "2025-08-13",
+      "title": "Started",
+      "mood": "Happy / Confused",
+      "content": "I took a chocolate for you to just see your reaction and start a conversation to see.... what is it.. bro.. and then you actually said things.. like... 'ye haye usually sbke liye nhi kerti and all' that's hit me.. but still vohi feeling that maybe you are just comfortable around me as a big brother so, I again stopped myself.",
+      "highlight": true
+    },
+    {
       "media": [
         { "type": "image", "src": "assets/images/1.jpg", "caption": "Us" }
-      ]
-    },
-    {
-      "date": "2025-09-02",
-      "title": "Missed you today",
-      "mood": "longing",
-      "content": "Even the silence felt like it was saying your name.",
-      "highlight": true,
-      "media": [
+      ],
+       "medsia": [
         { "type": "video", "src": "assets/videos/sample-1.mp4", "poster": "assets/images/3.jpg", "caption": "Laughs" }
       ]
-    },
-    {
-      "date": "2025-09-04",
-      "title": "Valentine's little moments",
-      "mood": "grateful",
-      "content": "We didn't need anything fancy. Your smile did all the magic.",
-      "highlight": true
     }
   ]
 }
