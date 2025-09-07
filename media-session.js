@@ -84,28 +84,33 @@ class MediaSessionManager {
     this.currentTrack = track;
 
     try {
-      // Create a beautiful animated artwork with foggy effect
-      const animatedArtwork = this.createAnimatedArtwork(track);
+      // Clear existing metadata first to force update
+      navigator.mediaSession.metadata = null;
       
+      // Create artwork with proper fallback
+      const artwork = this.createArtwork(track);
+      
+      // Set new metadata
       navigator.mediaSession.metadata = new MediaMetadata({
         title: track.title || 'Unknown Title',
         artist: track.artist || 'Unknown Artist',
         album: track.album || 'Our Music',
-        artwork: animatedArtwork
+        artwork: artwork
       });
 
-      console.log('Media Session metadata updated with animations:', track.title);
+      console.log('Media Session metadata updated:', track.title, 'by', track.artist);
     } catch (error) {
       console.error('Error updating Media Session metadata:', error);
     }
   }
   
   // Create artwork with proper fallback
-  createAnimatedArtwork(track) {
+  createArtwork(track) {
     const baseArtwork = track.artwork || 'assets/images/music-placeholder.jpg';
     
-    // Use actual artwork if it exists, otherwise use animated SVG
-    if (baseArtwork && baseArtwork !== 'assets/images/music-placeholder.jpg') {
+    // Check if it's a real artwork file (not placeholder)
+    if (baseArtwork && baseArtwork !== 'assets/images/music-placeholder.jpg' && baseArtwork.includes('.')) {
+      // Use actual artwork
       return [
         { src: baseArtwork, sizes: '96x96', type: 'image/png' },
         { src: baseArtwork, sizes: '128x128', type: 'image/png' },
@@ -115,35 +120,35 @@ class MediaSessionManager {
         { src: baseArtwork, sizes: '512x512', type: 'image/png' }
       ];
     } else {
-      // Use animated SVG for placeholder
+      // Use red foggy artwork for placeholder
       return [
         {
-          src: this.createFoggyArtwork(baseArtwork, 96),
+          src: this.createRedFoggyArtwork(96),
           sizes: '96x96',
           type: 'image/svg+xml'
         },
         {
-          src: this.createFoggyArtwork(baseArtwork, 128),
+          src: this.createRedFoggyArtwork(128),
           sizes: '128x128',
           type: 'image/svg+xml'
         },
         {
-          src: this.createFoggyArtwork(baseArtwork, 192),
+          src: this.createRedFoggyArtwork(192),
           sizes: '192x192',
           type: 'image/svg+xml'
         },
         {
-          src: this.createFoggyArtwork(baseArtwork, 256),
+          src: this.createRedFoggyArtwork(256),
           sizes: '256x256',
           type: 'image/svg+xml'
         },
         {
-          src: this.createFoggyArtwork(baseArtwork, 384),
+          src: this.createRedFoggyArtwork(384),
           sizes: '384x384',
           type: 'image/svg+xml'
         },
         {
-          src: this.createFoggyArtwork(baseArtwork, 512),
+          src: this.createRedFoggyArtwork(512),
           sizes: '512x512',
           type: 'image/svg+xml'
         }
@@ -151,8 +156,8 @@ class MediaSessionManager {
     }
   }
   
-  // Create foggy animated artwork
-  createFoggyArtwork(baseSrc, size) {
+  // Create red foggy artwork for placeholder
+  createRedFoggyArtwork(size) {
     const svg = `
       <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -171,38 +176,38 @@ class MediaSessionManager {
               <feMergeNode in="SourceGraphic"/>
             </feMerge>
           </filter>
-          <radialGradient id="fogGradient" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:0.3"/>
-            <stop offset="50%" style="stop-color:#4ecdc4;stop-opacity:0.2"/>
-            <stop offset="100%" style="stop-color:#45b7d1;stop-opacity:0.1"/>
+          <radialGradient id="redFogGradient" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#dc2626;stop-opacity:0.8"/>
+            <stop offset="50%" style="stop-color:#b91c1c;stop-opacity:0.6"/>
+            <stop offset="100%" style="stop-color:#991b1b;stop-opacity:0.4"/>
           </radialGradient>
         </defs>
         
-        <!-- Background with foggy effect -->
-        <rect width="100%" height="100%" fill="url(#fogGradient)" filter="url(#foggyEffect)"/>
+        <!-- Red background with foggy effect -->
+        <rect width="100%" height="100%" fill="url(#redFogGradient)" filter="url(#foggyEffect)"/>
         
-        <!-- Animated fog particles -->
-        <circle cx="20%" cy="30%" r="8" fill="rgba(255,255,255,0.3)" filter="url(#foggyEffect)">
+        <!-- Animated red fog particles -->
+        <circle cx="20%" cy="30%" r="8" fill="rgba(255,255,255,0.4)" filter="url(#foggyEffect)">
           <animate attributeName="cx" values="20;80;20" dur="4s" repeatCount="indefinite"/>
           <animate attributeName="cy" values="30;70;30" dur="4s" repeatCount="indefinite"/>
           <animate attributeName="r" values="8;12;8" dur="3s" repeatCount="indefinite"/>
         </circle>
         
-        <circle cx="80%" cy="20%" r="6" fill="rgba(255,255,255,0.2)" filter="url(#foggyEffect)">
+        <circle cx="80%" cy="20%" r="6" fill="rgba(255,255,255,0.3)" filter="url(#foggyEffect)">
           <animate attributeName="cx" values="80;20;80" dur="5s" repeatCount="indefinite"/>
           <animate attributeName="cy" values="20;80;20" dur="5s" repeatCount="indefinite"/>
           <animate attributeName="r" values="6;10;6" dur="4s" repeatCount="indefinite"/>
         </circle>
         
-        <circle cx="50%" cy="80%" r="10" fill="rgba(255,255,255,0.25)" filter="url(#foggyEffect)">
+        <circle cx="50%" cy="80%" r="10" fill="rgba(255,255,255,0.35)" filter="url(#foggyEffect)">
           <animate attributeName="cx" values="50;30;50" dur="6s" repeatCount="indefinite"/>
           <animate attributeName="cy" values="80;20;80" dur="6s" repeatCount="indefinite"/>
           <animate attributeName="r" values="10;14;10" dur="5s" repeatCount="indefinite"/>
         </circle>
         
-        <!-- Music note with glow -->
+        <!-- Music note with red glow -->
         <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" 
-              font-size="${size * 0.3}" fill="#1db954" filter="url(#glowEffect)">
+              font-size="${size * 0.3}" fill="#ffffff" filter="url(#glowEffect)">
           🎵
           <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
         </text>
@@ -310,6 +315,21 @@ class MediaSessionManager {
       navigator.mediaSession.playbackState = 'none';
     }
     this.stopPositionUpdates();
+  }
+  
+  // Force update metadata (clears and sets new)
+  forceUpdateMetadata(track) {
+    if (!('mediaSession' in navigator) || !track) return;
+    
+    console.log('Force updating Media Session for:', track.title);
+    
+    // Clear everything first
+    this.clear();
+    
+    // Wait a bit then set new metadata
+    setTimeout(() => {
+      this.updateMetadata(track);
+    }, 100);
   }
 }
 

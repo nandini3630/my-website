@@ -521,11 +521,11 @@ class MusicManager {
       try {
         await window.musicPlayer.playSong(track);
         
-        // Update Media Session for native notification
+        // Force update Media Session for native notification
         if (window.mediaSessionManager) {
-          window.mediaSessionManager.updateMetadata(track);
+          window.mediaSessionManager.forceUpdateMetadata(track);
           window.mediaSessionManager.updatePlaybackState(true);
-          console.log('Updated native notification for track:', track.title);
+          console.log('Force updated native notification for track:', track.title);
         }
       } catch (error) {
         console.error('Error playing track:', error);

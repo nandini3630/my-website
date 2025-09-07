@@ -182,7 +182,7 @@ class MusicPlayer {
       
       // Update Media Session immediately when track changes
       if (window.mediaSessionManager) {
-        window.mediaSessionManager.updateMetadata(track);
+        window.mediaSessionManager.forceUpdateMetadata(track);
         console.log('Updated Media Session metadata for:', track.title);
       }
       
