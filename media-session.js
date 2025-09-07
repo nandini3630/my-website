@@ -100,43 +100,55 @@ class MediaSessionManager {
     }
   }
   
-  // Create animated artwork with foggy effects
+  // Create artwork with proper fallback
   createAnimatedArtwork(track) {
     const baseArtwork = track.artwork || 'assets/images/music-placeholder.jpg';
     
-    // Create multiple sizes with different effects
-    return [
-      {
-        src: this.createFoggyArtwork(baseArtwork, 96),
-        sizes: '96x96',
-        type: 'image/svg+xml'
-      },
-      {
-        src: this.createFoggyArtwork(baseArtwork, 128),
-        sizes: '128x128',
-        type: 'image/svg+xml'
-      },
-      {
-        src: this.createFoggyArtwork(baseArtwork, 192),
-        sizes: '192x192',
-        type: 'image/svg+xml'
-      },
-      {
-        src: this.createFoggyArtwork(baseArtwork, 256),
-        sizes: '256x256',
-        type: 'image/svg+xml'
-      },
-      {
-        src: this.createFoggyArtwork(baseArtwork, 384),
-        sizes: '384x384',
-        type: 'image/svg+xml'
-      },
-      {
-        src: this.createFoggyArtwork(baseArtwork, 512),
-        sizes: '512x512',
-        type: 'image/svg+xml'
-      }
-    ];
+    // Use actual artwork if it exists, otherwise use animated SVG
+    if (baseArtwork && baseArtwork !== 'assets/images/music-placeholder.jpg') {
+      return [
+        { src: baseArtwork, sizes: '96x96', type: 'image/png' },
+        { src: baseArtwork, sizes: '128x128', type: 'image/png' },
+        { src: baseArtwork, sizes: '192x192', type: 'image/png' },
+        { src: baseArtwork, sizes: '256x256', type: 'image/png' },
+        { src: baseArtwork, sizes: '384x384', type: 'image/png' },
+        { src: baseArtwork, sizes: '512x512', type: 'image/png' }
+      ];
+    } else {
+      // Use animated SVG for placeholder
+      return [
+        {
+          src: this.createFoggyArtwork(baseArtwork, 96),
+          sizes: '96x96',
+          type: 'image/svg+xml'
+        },
+        {
+          src: this.createFoggyArtwork(baseArtwork, 128),
+          sizes: '128x128',
+          type: 'image/svg+xml'
+        },
+        {
+          src: this.createFoggyArtwork(baseArtwork, 192),
+          sizes: '192x192',
+          type: 'image/svg+xml'
+        },
+        {
+          src: this.createFoggyArtwork(baseArtwork, 256),
+          sizes: '256x256',
+          type: 'image/svg+xml'
+        },
+        {
+          src: this.createFoggyArtwork(baseArtwork, 384),
+          sizes: '384x384',
+          type: 'image/svg+xml'
+        },
+        {
+          src: this.createFoggyArtwork(baseArtwork, 512),
+          sizes: '512x512',
+          type: 'image/svg+xml'
+        }
+      ];
+    }
   }
   
   // Create foggy animated artwork

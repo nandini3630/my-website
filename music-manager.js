@@ -409,7 +409,8 @@ class MusicManager {
     grid.innerHTML = songsToRender.map((song, index) => `
       <div class="music-item" data-song-index="${index}">
         <div class="music-artwork">
-          <div class="artwork-placeholder">
+          <img src="${song.artwork}" alt="${song.title}" class="artwork-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="artwork-placeholder" style="display: none;">
             <span class="placeholder-icon">🎵</span>
           </div>
           <div class="play-overlay">

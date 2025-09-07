@@ -529,24 +529,67 @@ class MusicPlayer {
     
     if (titleEl) titleEl.textContent = track.title || 'Unknown Title';
     if (artistEl) artistEl.textContent = track.artist || 'Unknown Artist';
+    
+    // Handle artwork display properly
     if (artworkEl) {
-      // Don't try to load artwork, just show placeholder
-      artworkEl.style.display = 'none';
-      // Create a placeholder if it doesn't exist
-      let placeholder = artworkEl.nextElementSibling;
-      if (!placeholder || !placeholder.classList.contains('artwork-placeholder')) {
-        placeholder = document.createElement('div');
-        placeholder.className = 'artwork-placeholder';
-        placeholder.innerHTML = '<span class="placeholder-icon">🎵</span>';
-        artworkEl.parentNode.insertBefore(placeholder, artworkEl.nextSibling);
-      }
-      placeholder.style.display = 'flex';
+      this.loadArtwork(artworkEl, track.artwork);
     }
     
     // Update Media Session for native phone notifications
     if (window.mediaSessionManager) {
       window.mediaSessionManager.updateMetadata(track);
     }
+  }
+  
+  // Load artwork with proper error handling
+  loadArtwork(artworkEl, artworkPath) {
+    if (!artworkPath || artworkPath === 'assets/images/music-placeholder.jpg') {
+      // Show placeholder for default artwork
+      this.showArtworkPlaceholder(artworkEl);
+      return;
+    }
+    
+    // Try to load the actual artwork
+    const img = new Image();
+    
+    img.onload = () => {
+      // Image loaded successfully
+      artworkEl.src = img.src;
+      artworkEl.style.display = 'block';
+      artworkEl.alt = 'Track artwork';
+      
+      // Hide placeholder if it exists
+      const placeholder = artworkEl.nextElementSibling;
+      if (placeholder && placeholder.classList.contains('artwork-placeholder')) {
+        placeholder.style.display = 'none';
+      }
+      
+      console.log('Artwork loaded successfully:', artworkPath);
+    };
+    
+    img.onerror = () => {
+      // Image failed to load, show placeholder
+      console.warn('Failed to load artwork:', artworkPath);
+      this.showArtworkPlaceholder(artworkEl);
+    };
+    
+    // Set the source to trigger loading
+    img.src = artworkPath;
+  }
+  
+  // Show artwork placeholder
+  showArtworkPlaceholder(artworkEl) {
+    artworkEl.style.display = 'none';
+    
+    // Create or show placeholder
+    let placeholder = artworkEl.nextElementSibling;
+    if (!placeholder || !placeholder.classList.contains('artwork-placeholder')) {
+      placeholder = document.createElement('div');
+      placeholder.className = 'artwork-placeholder';
+      placeholder.innerHTML = '<span class="placeholder-icon">🎵</span>';
+      artworkEl.parentNode.insertBefore(placeholder, artworkEl.nextSibling);
+    }
+    placeholder.style.display = 'flex';
   }
 
   updateUI() {
