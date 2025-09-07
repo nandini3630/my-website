@@ -29,10 +29,7 @@ class MusicManager {
     // Wait for music player to be ready
     await this.waitForMusicPlayer();
     
-    // Test notification
-    setTimeout(() => {
-      this.showNotification('Music app ready!', 'success', 2000);
-    }, 1000);
+    // Don't show startup notification
   }
 
   async waitForMusicPlayer() {
@@ -286,9 +283,7 @@ class MusicManager {
     }
     this.saveUserData();
     
-    // Show notification
-    const message = this.isShuffled ? 'Shuffle enabled' : 'Shuffle disabled';
-    this.showNotification(message, 'info', 2000);
+    // Don't show shuffle notifications
     
     return this.isShuffled;
   }
@@ -306,9 +301,7 @@ class MusicManager {
     this.isRepeating = !this.isRepeating;
     this.saveUserData();
     
-    // Show notification
-    const message = this.isRepeating ? 'Repeat enabled' : 'Repeat disabled';
-    this.showNotification(message, 'info', 2000);
+    // Don't show repeat notifications
     
     return this.isRepeating;
   }
@@ -481,7 +474,8 @@ class MusicManager {
         try {
           await window.musicPlayer.playSong(song);
           console.log('Song playing successfully');
-          this.showNotification(`Now playing: ${song.title}`, 'playing', 0, { persistent: true });
+          // Show mobile notification with controls when playing
+          this.showMobileMusicNotification(song);
         } catch (error) {
           console.error('Error playing song:', error);
           this.showNotification(`Failed to play: ${song.title}`, 'error', 4000);
@@ -525,11 +519,25 @@ class MusicManager {
     if (window.musicPlayer) {
       try {
         await window.musicPlayer.playSong(track);
-        this.showNotification(`Now playing: ${track.title}`, 'playing', 0, { persistent: true });
+        // Show mobile notification with controls when playing
+        this.showMobileMusicNotification(track);
       } catch (error) {
         console.error('Error playing track:', error);
         this.showNotification(`Failed to play: ${track.title}`, 'error', 4000);
       }
+    }
+  }
+  
+  // Show mobile music notification with controls
+  showMobileMusicNotification(track) {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile && track) {
+      // Remove any existing music notifications
+      const existingNotifications = document.querySelectorAll('.notification.persistent');
+      existingNotifications.forEach(notif => notif.remove());
+      
+      // Show new music notification
+      this.showNotification(`Now playing: ${track.title}`, 'playing', 0, { persistent: true });
     }
   }
 
@@ -591,7 +599,7 @@ class MusicManager {
     const currentTrack = this.getCurrentTrack();
     
     if (isMobile && (type === 'playing' || type === 'paused') && currentTrack) {
-      // Mobile music notification with controls - matching your design
+      // Mobile music notification with full controls
       notification.innerHTML = `
         <div class="notification-header">
           <div class="notification-title">${icons[type] || icons.info} Our Music</div>
@@ -599,17 +607,29 @@ class MusicManager {
         </div>
         <div class="notification-message">${message}</div>
         <div class="notification-controls">
+          <button class="notification-btn shuffle-btn ${this.isShuffled ? 'active' : ''}" title="Shuffle">🔀</button>
           <button class="notification-btn prev-btn" title="Previous">⏮</button>
           <button class="notification-btn play-pause-btn" title="Play/Pause">${window.musicPlayer?.isPlaying ? '⏸' : '▶'}</button>
           <button class="notification-btn next-btn" title="Next">⏭</button>
+          <button class="notification-btn repeat-btn ${this.isRepeating ? 'active' : ''}" title="Repeat">🔁</button>
         </div>
         <div class="notification-progress"></div>
       `;
       
       // Add control functionality
+      const shuffleBtn = notification.querySelector('.shuffle-btn');
       const prevBtn = notification.querySelector('.prev-btn');
       const playPauseBtn = notification.querySelector('.play-pause-btn');
       const nextBtn = notification.querySelector('.next-btn');
+      const repeatBtn = notification.querySelector('.repeat-btn');
+      
+      shuffleBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.musicPlayer) {
+          window.musicPlayer.toggleShuffle();
+          this.updateNotificationControls(notification);
+        }
+      });
       
       prevBtn?.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -631,6 +651,14 @@ class MusicManager {
         e.stopPropagation();
         if (window.musicPlayer) {
           window.musicPlayer.nextTrack();
+          this.updateNotificationControls(notification);
+        }
+      });
+      
+      repeatBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.musicPlayer) {
+          window.musicPlayer.toggleRepeat();
           this.updateNotificationControls(notification);
         }
       });
@@ -680,8 +708,19 @@ class MusicManager {
   
   updateNotificationControls(notification) {
     const playPauseBtn = notification.querySelector('.play-pause-btn');
+    const shuffleBtn = notification.querySelector('.shuffle-btn');
+    const repeatBtn = notification.querySelector('.repeat-btn');
+    
     if (playPauseBtn && window.musicPlayer) {
       playPauseBtn.textContent = window.musicPlayer.isPlaying ? '⏸' : '▶';
+    }
+    
+    if (shuffleBtn) {
+      shuffleBtn.classList.toggle('active', this.isShuffled);
+    }
+    
+    if (repeatBtn) {
+      repeatBtn.classList.toggle('active', this.isRepeating);
     }
   }
 

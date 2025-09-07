@@ -123,11 +123,11 @@ class MusicPlayer {
   }
 
   setupCallDetection() {
-    // Detect incoming calls (simplified implementation)
+    // Don't pause music when screen locks/unlocks
+    // Only handle actual call detection if needed
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden && this.isPlaying) {
-        this.simulateCallDetection();
-      }
+      // Don't pause music on visibility change (screen lock/unlock)
+      console.log('Visibility changed, but continuing playback');
     });
 
     window.addEventListener('focus', () => {
@@ -260,11 +260,11 @@ class MusicPlayer {
       this.isPlaying = true;
       this.updateUI();
       
-      // Show playing notification
+      // Show mobile notification with controls when playing
       if (window.musicManager) {
         const currentTrack = window.musicManager.getCurrentTrack();
         if (currentTrack) {
-          window.musicManager.showNotification(`Now playing: ${currentTrack.title}`, 'playing', 0, { persistent: true });
+          window.musicManager.showMobileMusicNotification(currentTrack);
         }
       }
       
@@ -293,26 +293,14 @@ class MusicPlayer {
         this.isPlaying = false;
         this.updateUI();
         
-        // Show paused notification
-        if (window.musicManager) {
-          const currentTrack = window.musicManager.getCurrentTrack();
-          if (currentTrack) {
-            window.musicManager.showNotification(`Paused: ${currentTrack.title}`, 'paused', 0, { persistent: true });
-          }
-        }
+      // Don't show pause notifications
       });
     } else {
       this.audio.pause();
       this.isPlaying = false;
       this.updateUI();
       
-      // Show paused notification
-      if (window.musicManager) {
-        const currentTrack = window.musicManager.getCurrentTrack();
-        if (currentTrack) {
-          window.musicManager.showNotification(`Paused: ${currentTrack.title}`, 'paused', 0, { persistent: true });
-        }
-      }
+      // Don't show pause notifications
     }
   }
 

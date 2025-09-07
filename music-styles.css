@@ -1317,7 +1317,7 @@ body::before {
   box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
 }
 
-/* Enhanced Progress Bar */
+/* Enhanced Progress Bar - Smooth Zigzag */
 .notification-progress {
   position: relative;
   height: 4px;
@@ -1340,19 +1340,27 @@ body::before {
     #1ed760 75%, 
     var(--accent-green) 100%);
   background-size: 20px 100%;
-  animation: zigzag 1.5s linear infinite;
   width: 100%;
   transform: translateX(-100%);
   animation: progressBar 5s linear forwards;
 }
 
 .notification.persistent .notification-progress::before {
-  animation: progressBar 0s linear forwards;
   background: linear-gradient(90deg, 
     var(--accent-green) 0%, 
-    #1ed760 100%);
+    #1ed760 25%, 
+    var(--accent-green) 50%, 
+    #1ed760 75%, 
+    var(--accent-green) 100%);
+  background-size: 20px 100%;
+  animation: smoothZigzag 2s linear infinite;
   width: 100%;
   transform: translateX(0);
+}
+
+@keyframes smoothZigzag {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 0; }
 }
 
 @keyframes zigzag {
@@ -1588,15 +1596,19 @@ button:active {
   }
   
   .notification-controls {
-    gap: 20px;
+    gap: 15px;
     margin: 15px 0;
     padding: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
   }
   
   .notification-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 18px;
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
@@ -1621,9 +1633,9 @@ button:active {
   }
   
   .notification-btn.play-pause-btn {
-    width: 52px;
-    height: 52px;
-    font-size: 20px;
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
     background: var(--accent-green);
     border-color: var(--accent-green);
     color: white;
@@ -1633,6 +1645,16 @@ button:active {
     background: var(--accent-green-hover);
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+  }
+  
+  .notification-btn.active {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: white;
+  }
+  
+  .notification-btn.active:hover {
+    background: var(--accent-green-hover);
   }
   
   .mobile-menu-btn {
