@@ -1,25 +1,11 @@
 {
   "songs": [
     {
-      "title": "Na Jatta Na",
-      "artist": "demo",
-      "duration": "3:45",
-      "file": "assets/audio/na_jatta_na.mp3",
-      "artwork": "assets/images/music-placeholder.jpg"
-    },
-    {
-      "title": "balender",
-      "artist": "Your Artist",
-      "duration": "4:12",
-      "file": "assets/audio/Blender.mp3",
-      "artwork": "assets/images/music-placeholder.jpg"
-    },
-    {
       "title": "over and over",
       "artist": "Armaan Gill , Arnaaz Gill",
       "duration": "2:58",
       "file": "assets/audio/over_and_over.mp3",
-      "artwork": "assets/images/album-artwork/image.png"
+      "artwork": "assets/images/album-artwork/over_and_over.png"
     },
     {
       "title": "suneha",
@@ -27,6 +13,27 @@
       "duration": "3:15",
       "file": "assets/audio/Suneha.mp3",
       "artwork": "assets/images/album-artwork/suneha.png"
+    },
+    {
+      "title": "Born To Gangster 2",
+      "artist": "Snehil",
+      "duration": "3:45",
+      "file": "assets/audio/Born_To_Gangster_2.mp3",
+      "artwork": "assets/images/album-artwork/born_to_gangster.png"
+    },
+    {
+      "title": "You",
+      "artist": "Jot",
+      "duration": "3:00",
+      "file": "assets/audio/You.mp3",
+      "artwork": "assets/images/album-artwork/you.png"
+    },
+    {
+      "title": "Born To Gangster 2",
+      "artist": "Masoom sharma",
+      "duration": "3:45",
+      "file": "assets/audio/sharp_shooter.mp3",
+      "artwork": "assets/images/album-artwork/sharp_shooter.png"
     }
   ],
   "settings": {
