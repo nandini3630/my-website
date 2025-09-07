@@ -1,0 +1,396 @@
+/* Custom Styles for Native Phone Notifications */
+
+/* Media Session Notification Enhancements */
+@media (prefers-color-scheme: dark) {
+  /* Dark theme notification styling */
+  .media-session-notification {
+    background: linear-gradient(135deg, 
+      rgba(220, 38, 38, 0.95) 0%, 
+      rgba(185, 28, 28, 0.95) 50%, 
+      rgba(153, 27, 27, 0.95) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Foggy Animation Effects */
+@keyframes foggyFloat {
+  0%, 100% { 
+    transform: translateY(0px) scale(1);
+    opacity: 0.7;
+  }
+  50% { 
+    transform: translateY(-10px) scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes foggyPulse {
+  0%, 100% { 
+    filter: blur(2px) brightness(1);
+    opacity: 0.8;
+  }
+  50% { 
+    filter: blur(4px) brightness(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes foggyGlow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(220, 38, 38, 0.6), 
+                0 0 60px rgba(29, 185, 84, 0.3);
+  }
+}
+
+/* Smooth Zigzag Progress Bar */
+@keyframes smoothZigzag {
+  0% { 
+    background-position: 0 0;
+    transform: translateX(0);
+  }
+  25% { 
+    background-position: 10px 0;
+    transform: translateX(2px);
+  }
+  50% { 
+    background-position: 20px 0;
+    transform: translateX(0);
+  }
+  75% { 
+    background-position: 10px 0;
+    transform: translateX(-2px);
+  }
+  100% { 
+    background-position: 0 0;
+    transform: translateX(0);
+  }
+}
+
+@keyframes progressFlow {
+  0% { 
+    background-position: 0% 0%;
+    opacity: 0.8;
+  }
+  50% { 
+    background-position: 100% 0%;
+    opacity: 1;
+  }
+  100% { 
+    background-position: 0% 0%;
+    opacity: 0.8;
+  }
+}
+
+/* Enhanced Progress Bar with Zigzag */
+.media-session-progress {
+  position: relative;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.2) 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.2) 100%);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.media-session-progress::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, 
+    #1db954 0%, 
+    #1ed760 25%, 
+    #1db954 50%, 
+    #1ed760 75%, 
+    #1db954 100%);
+  background-size: 20px 100%;
+  animation: smoothZigzag 2s linear infinite, progressFlow 3s ease-in-out infinite;
+  border-radius: 2px;
+}
+
+.media-session-progress::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.3) 50%, 
+    transparent 100%);
+  animation: progressFlow 2s linear infinite;
+  border-radius: 2px;
+}
+
+/* Foggy Button Effects */
+.media-session-button {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.media-session-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.media-session-button:hover::before {
+  opacity: 1;
+  animation: foggyPulse 1s ease-in-out infinite;
+}
+
+.media-session-button:active {
+  transform: scale(0.95);
+  animation: foggyGlow 0.5s ease-in-out;
+}
+
+/* Play/Pause Button Special Effects */
+.media-session-play-button {
+  background: linear-gradient(135deg, #1db954 0%, #1ed760 100%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(29, 185, 84, 0.4);
+  animation: foggyFloat 3s ease-in-out infinite;
+}
+
+.media-session-play-button::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, 
+    rgba(29, 185, 84, 0.3) 0%, 
+    rgba(30, 215, 96, 0.3) 100%);
+  border-radius: 50%;
+  z-index: -1;
+  animation: foggyGlow 2s ease-in-out infinite;
+}
+
+/* Notification Container Foggy Effect */
+.media-session-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.media-session-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.05) 0%, 
+    transparent 50%);
+  animation: foggyFloat 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.media-session-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.02) 25%, 
+    transparent 50%, 
+    rgba(255, 255, 255, 0.02) 75%, 
+    transparent 100%);
+  background-size: 20px 20px;
+  animation: smoothZigzag 4s linear infinite;
+  pointer-events: none;
+}
+
+/* Text Foggy Effects */
+.media-session-title {
+  position: relative;
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: foggyFloat 4s ease-in-out infinite;
+}
+
+.media-session-artist {
+  position: relative;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  animation: foggyFloat 4s ease-in-out infinite 0.5s;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+  .media-session-progress {
+    height: 3px;
+  }
+  
+  .media-session-button {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .media-session-play-button {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Permanent Foggy Effects */
+@keyframes permanentFog {
+  0%, 100% { 
+    opacity: 0.3;
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% { 
+    opacity: 0.6;
+    transform: translateY(-5px) rotate(1deg);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: translateY(-10px) rotate(0deg);
+  }
+  75% { 
+    opacity: 0.6;
+    transform: translateY(-5px) rotate(-1deg);
+  }
+}
+
+@keyframes permanentGlow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.7), 
+                0 0 50px rgba(29, 185, 84, 0.4);
+  }
+}
+
+/* Apply permanent effects to notification elements */
+.media-session-notification {
+  animation: permanentFog 6s ease-in-out infinite, permanentGlow 4s ease-in-out infinite;
+}
+
+.media-session-progress {
+  animation: permanentFog 8s ease-in-out infinite;
+}
+
+.media-session-progress::before {
+  animation: smoothZigzag 2s linear infinite, progressFlow 3s ease-in-out infinite, permanentFog 6s ease-in-out infinite;
+}
+
+.media-session-button {
+  animation: permanentFog 5s ease-in-out infinite;
+}
+
+.media-session-play-button {
+  animation: foggyFloat 3s ease-in-out infinite, permanentGlow 3s ease-in-out infinite;
+}
+
+/* Enhanced Zigzag with More Appeal */
+@keyframes enhancedZigzag {
+  0% { 
+    background-position: 0 0;
+    transform: translateX(0) scaleY(1);
+  }
+  12.5% { 
+    background-position: 5px 0;
+    transform: translateX(1px) scaleY(1.1);
+  }
+  25% { 
+    background-position: 10px 0;
+    transform: translateX(2px) scaleY(1);
+  }
+  37.5% { 
+    background-position: 15px 0;
+    transform: translateX(1px) scaleY(0.9);
+  }
+  50% { 
+    background-position: 20px 0;
+    transform: translateX(0) scaleY(1);
+  }
+  62.5% { 
+    background-position: 15px 0;
+    transform: translateX(-1px) scaleY(1.1);
+  }
+  75% { 
+    background-position: 10px 0;
+    transform: translateX(-2px) scaleY(1);
+  }
+  87.5% { 
+    background-position: 5px 0;
+    transform: translateX(-1px) scaleY(0.9);
+  }
+  100% { 
+    background-position: 0 0;
+    transform: translateX(0) scaleY(1);
+  }
+}
+
+/* Apply enhanced zigzag to progress bar */
+.media-session-progress::before {
+  animation: enhancedZigzag 2s linear infinite, progressFlow 3s ease-in-out infinite, permanentFog 6s ease-in-out infinite;
+}
+
+/* Floating Particles Animation */
+@keyframes floatingParticle {
+  0% { 
+    opacity: 0;
+    transform: translateY(0px) scale(0);
+  }
+  10% { 
+    opacity: 1;
+    transform: translateY(-10px) scale(1);
+  }
+  90% { 
+    opacity: 1;
+    transform: translateY(-100px) scale(1);
+  }
+  100% { 
+    opacity: 0;
+    transform: translateY(-120px) scale(0);
+  }
+}
+
+/* High Performance Mode */
+@media (prefers-reduced-motion: reduce) {
+  .media-session-progress::before,
+  .media-session-progress::after,
+  .media-session-button,
+  .media-session-play-button,
+  .media-session-container::before,
+  .media-session-container::after,
+  .media-session-title,
+  .media-session-artist,
+  .media-session-notification {
+    animation: none;
+  }
+}

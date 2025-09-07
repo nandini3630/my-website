@@ -84,48 +84,121 @@ class MediaSessionManager {
     this.currentTrack = track;
 
     try {
+      // Create a beautiful animated artwork with foggy effect
+      const animatedArtwork = this.createAnimatedArtwork(track);
+      
       navigator.mediaSession.metadata = new MediaMetadata({
         title: track.title || 'Unknown Title',
         artist: track.artist || 'Unknown Artist',
         album: track.album || 'Our Music',
-        artwork: [
-          {
-            src: track.artwork || 'assets/images/music-placeholder.jpg',
-            sizes: '96x96',
-            type: 'image/jpeg'
-          },
-          {
-            src: track.artwork || 'assets/images/music-placeholder.jpg',
-            sizes: '128x128',
-            type: 'image/jpeg'
-          },
-          {
-            src: track.artwork || 'assets/images/music-placeholder.jpg',
-            sizes: '192x192',
-            type: 'image/jpeg'
-          },
-          {
-            src: track.artwork || 'assets/images/music-placeholder.jpg',
-            sizes: '256x256',
-            type: 'image/jpeg'
-          },
-          {
-            src: track.artwork || 'assets/images/music-placeholder.jpg',
-            sizes: '384x384',
-            type: 'image/jpeg'
-          },
-          {
-            src: track.artwork || 'assets/images/music-placeholder.jpg',
-            sizes: '512x512',
-            type: 'image/jpeg'
-          }
-        ]
+        artwork: animatedArtwork
       });
 
-      console.log('Media Session metadata updated:', track.title);
+      console.log('Media Session metadata updated with animations:', track.title);
     } catch (error) {
       console.error('Error updating Media Session metadata:', error);
     }
+  }
+  
+  // Create animated artwork with foggy effects
+  createAnimatedArtwork(track) {
+    const baseArtwork = track.artwork || 'assets/images/music-placeholder.jpg';
+    
+    // Create multiple sizes with different effects
+    return [
+      {
+        src: this.createFoggyArtwork(baseArtwork, 96),
+        sizes: '96x96',
+        type: 'image/svg+xml'
+      },
+      {
+        src: this.createFoggyArtwork(baseArtwork, 128),
+        sizes: '128x128',
+        type: 'image/svg+xml'
+      },
+      {
+        src: this.createFoggyArtwork(baseArtwork, 192),
+        sizes: '192x192',
+        type: 'image/svg+xml'
+      },
+      {
+        src: this.createFoggyArtwork(baseArtwork, 256),
+        sizes: '256x256',
+        type: 'image/svg+xml'
+      },
+      {
+        src: this.createFoggyArtwork(baseArtwork, 384),
+        sizes: '384x384',
+        type: 'image/svg+xml'
+      },
+      {
+        src: this.createFoggyArtwork(baseArtwork, 512),
+        sizes: '512x512',
+        type: 'image/svg+xml'
+      }
+    ];
+  }
+  
+  // Create foggy animated artwork
+  createFoggyArtwork(baseSrc, size) {
+    const svg = `
+      <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="foggyEffect">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.8 0" result="fade"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="fade"/>
+            </feMerge>
+          </filter>
+          <filter id="glowEffect">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <radialGradient id="fogGradient" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:0.3"/>
+            <stop offset="50%" style="stop-color:#4ecdc4;stop-opacity:0.2"/>
+            <stop offset="100%" style="stop-color:#45b7d1;stop-opacity:0.1"/>
+          </radialGradient>
+        </defs>
+        
+        <!-- Background with foggy effect -->
+        <rect width="100%" height="100%" fill="url(#fogGradient)" filter="url(#foggyEffect)"/>
+        
+        <!-- Animated fog particles -->
+        <circle cx="20%" cy="30%" r="8" fill="rgba(255,255,255,0.3)" filter="url(#foggyEffect)">
+          <animate attributeName="cx" values="20;80;20" dur="4s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="30;70;30" dur="4s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="8;12;8" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        
+        <circle cx="80%" cy="20%" r="6" fill="rgba(255,255,255,0.2)" filter="url(#foggyEffect)">
+          <animate attributeName="cx" values="80;20;80" dur="5s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="20;80;20" dur="5s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="6;10;6" dur="4s" repeatCount="indefinite"/>
+        </circle>
+        
+        <circle cx="50%" cy="80%" r="10" fill="rgba(255,255,255,0.25)" filter="url(#foggyEffect)">
+          <animate attributeName="cx" values="50;30;50" dur="6s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="80;20;80" dur="6s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="10;14;10" dur="5s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Music note with glow -->
+        <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" 
+              font-size="${size * 0.3}" fill="#1db954" filter="url(#glowEffect)">
+          🎵
+          <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+        </text>
+      </svg>
+    `;
+    
+    // Convert SVG to data URL
+    return 'data:image/svg+xml;base64,' + btoa(svg);
   }
 
   updatePlaybackState(isPlaying) {
@@ -148,9 +221,55 @@ class MediaSessionManager {
           playbackRate: audio.playbackRate,
           position: audio.currentTime
         });
+        
+        // Add foggy effect to progress updates
+        this.addFoggyProgressEffect(audio.currentTime, audio.duration);
       } catch (error) {
         console.error('Error updating Media Session position state:', error);
       }
+    }
+  }
+  
+  // Add foggy progress effect
+  addFoggyProgressEffect(currentTime, duration) {
+    const progress = (currentTime / duration) * 100;
+    
+    // Create a subtle foggy effect based on progress
+    if (progress > 0 && progress < 100) {
+      // Add a gentle pulsing effect during playback
+      document.body.style.setProperty('--progress-glow', `${progress}%`);
+      
+      // Create floating particles effect
+      this.createFloatingParticles(progress);
+    }
+  }
+  
+  // Create floating particles for foggy effect
+  createFloatingParticles(progress) {
+    // Only create particles occasionally to avoid performance issues
+    if (Math.random() > 0.95) {
+      const particle = document.createElement('div');
+      particle.style.cssText = `
+        position: fixed;
+        width: 4px;
+        height: 4px;
+        background: radial-gradient(circle, rgba(29, 185, 84, 0.6) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 10000;
+        left: ${Math.random() * window.innerWidth}px;
+        top: ${Math.random() * window.innerHeight}px;
+        animation: foggyFloat 3s ease-out forwards;
+      `;
+      
+      document.body.appendChild(particle);
+      
+      // Remove particle after animation
+      setTimeout(() => {
+        if (particle.parentNode) {
+          particle.parentNode.removeChild(particle);
+        }
+      }, 3000);
     }
   }
 
