@@ -5,10 +5,10 @@
       "description": "Messages and Diary Access"
     }
   },
-  "sessionTimeout": 10000,
+  "sessionTimeout": 3600000,
   "securitySettings": {
     "preventRightClick": true,
-    "preventDevTools": false,
+    "preventDevTools": true,
     "preventScreenshot": false,
     "disableImageDownload": true,
     "disableVideoDownload": false,

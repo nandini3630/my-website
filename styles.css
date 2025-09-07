@@ -20,8 +20,8 @@ main{flex:1}
   .nav a{padding:12px 16px;border-radius:8px;display:block;text-align:center}
   .nav a:hover{background:rgba(255,255,255,.1)}
 }
-.audio-btn{border:1px solid var(--primary);background:transparent;color:var(--text);padding:8px 12px;border-radius:999px;cursor:pointer;transition:.25s box-shadow,.25s transform}
-.audio-btn:hover{box-shadow:0 0 0 6px var(--ring);transform:translateY(-1px)}
+.audio-btn{border:1px solid var(--primary);background:transparent;color:var(--text);padding:8px 12px;border-radius:999px;cursor:pointer;transition:.25s box-shadow,.25s transform;text-decoration:none;display:inline-block}
+.audio-btn:hover{box-shadow:0 0 0 6px var(--ring);transform:translateY(-1px);color:var(--text)}
 .hero{padding:64px 20px 40px;max-width:980px;margin:0 auto;text-align:center}
 .hero h1{font-size:clamp(28px,6vw,48px);line-height:1.15;margin:0 0 12px}
 .hero p{color:var(--muted);margin:0 0 18px}
