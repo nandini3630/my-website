@@ -1,27 +1,23 @@
 {
   "passwords": {
     "love2024": {
-      "access": ["index","messages", "diary"],
+      "access": ["index","messages", "diary","gallery", "miscommunications"],
       "description": "Messages and Diary Access"
-    },
-    "love2025": {
-      "access": ["gallery", "miscommunications"],
-      "description": "Gallery and Miscommunications Access"
     }
   },
   "sessionTimeout": 10000,
   "securitySettings": {
     "preventRightClick": true,
-    "preventDevTools": true,
-    "preventScreenshot": true,
+    "preventDevTools": false,
+    "preventScreenshot": false,
     "disableImageDownload": true,
-    "disableVideoDownload": true,
+    "disableVideoDownload": false,
     "obfuscateContent": false,
-    "preventUrlAccess": true,
-    "preventInspectElement": true,
-    "preventViewSource": true,
-    "preventConsoleAccess": true,
-    "encryptContent": true,
-    "preventNetworkInspection": true
+    "preventUrlAccess": false,
+    "preventInspectElement": false,
+    "preventViewSource": false,
+    "preventConsoleAccess": false,
+    "encryptContent": false,
+    "preventNetworkInspection": false
   }
 }

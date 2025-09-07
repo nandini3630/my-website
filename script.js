@@ -74,7 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
     audioToggle.disabled = false;
     audioToggle.textContent = audio.paused ? '▶ Our Song' : '⏸ Pause';
   };
-  audioToggle?.addEventListener('click', async () => {
+  
+  audioToggle?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     try {
       if (audio.paused) {
         await audio.play();
@@ -84,10 +88,20 @@ document.addEventListener('DOMContentLoaded', () => {
       refreshAudioUi();
     } catch (err) {
       console.error('Audio error', err);
+      // Show user-friendly message instead of blocking access
+      audioToggle.textContent = 'Audio not available';
+      audioToggle.disabled = true;
     }
   });
+  
   audio?.addEventListener('play', refreshAudioUi);
   audio?.addEventListener('pause', refreshAudioUi);
+  audio?.addEventListener('error', (e) => {
+    console.log('Audio file not found, showing placeholder message');
+    audioToggle.textContent = 'Add your song to assets/audio/song.mp3';
+    audioToggle.disabled = true;
+  });
+  
   refreshAudioUi();
 
   // Fetch helpers

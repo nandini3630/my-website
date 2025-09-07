@@ -32,17 +32,17 @@ class AdvancedSecurityManager {
         sessionTimeout: 10000,
         securitySettings: {
           preventRightClick: true,
-          preventDevTools: true,
-          preventScreenshot: true,
+          preventDevTools: false,
+          preventScreenshot: false,
           disableImageDownload: true,
-          disableVideoDownload: true,
+          disableVideoDownload: false,
           obfuscateContent: false,
-          preventUrlAccess: true,
-          preventInspectElement: true,
-          preventViewSource: true,
-          preventConsoleAccess: true,
-          encryptContent: true,
-          preventNetworkInspection: true
+          preventUrlAccess: false,
+          preventInspectElement: false,
+          preventViewSource: false,
+          preventConsoleAccess: false,
+          encryptContent: false,
+          preventNetworkInspection: false
         }
       };
     }
@@ -218,9 +218,13 @@ class AdvancedSecurityManager {
   setupAdvancedSecurity() {
     if (!this.config.securitySettings) return;
 
-    // Prevent right-click
+    // Prevent right-click (except for audio elements)
     if (this.config.securitySettings.preventRightClick) {
       document.addEventListener('contextmenu', (e) => {
+        // Allow right-click on audio elements and audio buttons
+        if (e.target.closest('audio') || e.target.closest('#audioToggle') || e.target.closest('.audio-btn')) {
+          return true;
+        }
         e.preventDefault();
         return false;
       });
@@ -231,9 +235,14 @@ class AdvancedSecurityManager {
       this.setupDevToolsProtection();
     }
 
-    // Prevent F12, Ctrl+Shift+I, Ctrl+U, Ctrl+Shift+C
+    // Prevent F12, Ctrl+Shift+I, Ctrl+U, Ctrl+Shift+C (except for audio interactions)
     if (this.config.securitySettings.preventInspectElement) {
       document.addEventListener('keydown', (e) => {
+        // Allow space key for audio play/pause
+        if (e.key === ' ' && (e.target.closest('audio') || e.target.closest('#audioToggle') || e.target.closest('.audio-btn'))) {
+          return true;
+        }
+        
         if (e.key === 'F12' || 
             (e.ctrlKey && e.shiftKey && e.key === 'I') ||
             (e.ctrlKey && e.key === 'u') ||
@@ -393,6 +402,18 @@ class AdvancedSecurityManager {
         video.addEventListener('contextmenu', (e) => e.preventDefault());
       });
     }
+
+    // Allow audio elements to work normally
+    const audioElements = document.querySelectorAll('audio');
+    audioElements.forEach(audio => {
+      // Don't block audio interactions
+      audio.addEventListener('play', () => {
+        // Allow audio playback
+      });
+      audio.addEventListener('pause', () => {
+        // Allow audio pausing
+      });
+    });
 
     // Prevent network inspection
     if (this.config.securitySettings.preventNetworkInspection) {
