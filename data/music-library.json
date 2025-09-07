@@ -2,7 +2,7 @@
   "songs": [
     {
       "title": "Na Jatta Na",
-      "artist": "Unknown Artist",
+      "artist": "demo",
       "duration": "3:45",
       "file": "assets/audio/na_jatta_na.mp3",
       "artwork": "assets/images/music-placeholder.jpg"
@@ -20,6 +20,13 @@
       "duration": "2:58",
       "file": "assets/audio/over_and_over.mp3",
       "artwork": "assets/images/album-artwork/image.png"
+    },
+    {
+      "title": "suneha",
+      "artist": "Manjit Singh",
+      "duration": "3:15",
+      "file": "assets/audio/Suneha.mp3",
+      "artwork": "assets/images/album-artwork/suneha.png"
     }
   ],
   "settings": {
