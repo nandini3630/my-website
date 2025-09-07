@@ -158,17 +158,48 @@ class MusicPlayer {
   async loadTrack(track) {
     if (!track || !this.audio) {
       console.error('No track or audio element:', { track, audio: this.audio });
+      this.showError('No track or audio element available');
       return;
     }
 
     try {
       console.log('Loading track:', track.file);
+      
+      // Check network status
+      if (window.musicErrorHandler && !window.musicErrorHandler.checkNetworkStatus()) {
+        throw new Error('No internet connection');
+      }
+      
+      // Check if file exists before loading
+      const fileExists = await this.checkFileExists(track.file);
+      if (!fileExists) {
+        throw new Error(`Audio file not found: ${track.file}`);
+      }
+      
       // Use track.file instead of track.src for our simplified structure
       this.audio.src = track.file;
       this.updateTrackInfo(track);
       
-      // Load the audio
-      await this.audio.load();
+      // Load the audio with timeout
+      const loadPromise = new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('Audio loading timeout'));
+        }, 10000); // 10 second timeout
+        
+        this.audio.addEventListener('canplay', () => {
+          clearTimeout(timeout);
+          resolve();
+        }, { once: true });
+        
+        this.audio.addEventListener('error', () => {
+          clearTimeout(timeout);
+          reject(new Error('Audio loading failed'));
+        }, { once: true });
+        
+        this.audio.load();
+      });
+      
+      await loadPromise;
       console.log('Audio loaded successfully');
       
       // Update duration in library if not set
@@ -183,12 +214,39 @@ class MusicPlayer {
 
     } catch (error) {
       console.error('Error loading track:', error);
-      this.showError('Failed to load track');
+      const errorMessage = window.musicErrorHandler?.getUserFriendlyError(error) || 
+                          `Failed to load track: ${track.title}`;
+      this.showError(errorMessage);
+      
+      // Try to play next track if current fails
+      if (window.musicManager && window.musicManager.settings.autoPlay) {
+        setTimeout(() => {
+          this.nextTrack();
+        }, 2000);
+      }
     }
+  }
+  
+  // Check if audio file exists
+  async checkFileExists(filePath) {
+    if (!filePath) return false;
+    
+    // Use error handler if available
+    if (window.musicErrorHandler) {
+      return await window.musicErrorHandler.checkFileExists(filePath);
+    }
+    
+    // Fallback validation
+    return window.musicErrorHandler?.validateAudioFile(filePath) || 
+           (filePath.includes('.mp3') || filePath.includes('.wav') || filePath.includes('.ogg'));
   }
 
   async play() {
-    if (!this.audio.src) return;
+    if (!this.audio.src) {
+      console.warn('No audio source to play');
+      this.showError('No audio source available');
+      return;
+    }
 
     try {
       // Apply fade in if enabled
@@ -202,25 +260,59 @@ class MusicPlayer {
       this.isPlaying = true;
       this.updateUI();
       
+      // Show playing notification
+      if (window.musicManager) {
+        const currentTrack = window.musicManager.getCurrentTrack();
+        if (currentTrack) {
+          window.musicManager.showNotification(`Now playing: ${currentTrack.title}`, 'playing', 0, { persistent: true });
+        }
+      }
+      
     } catch (error) {
       console.error('Error playing audio:', error);
       this.showError('Failed to play audio');
+      
+      // Try to play next track if current fails
+      if (window.musicManager && window.musicManager.settings.autoPlay) {
+        setTimeout(() => {
+          this.nextTrack();
+        }, 2000);
+      }
     }
   }
 
   pause() {
-    if (!this.audio.src) return;
+    if (!this.audio.src) {
+      console.warn('No audio source to pause');
+      return;
+    }
 
     if (window.musicManager?.settings.fadeInOut) {
       this.fadeOut(() => {
         this.audio.pause();
         this.isPlaying = false;
         this.updateUI();
+        
+        // Show paused notification
+        if (window.musicManager) {
+          const currentTrack = window.musicManager.getCurrentTrack();
+          if (currentTrack) {
+            window.musicManager.showNotification(`Paused: ${currentTrack.title}`, 'paused', 0, { persistent: true });
+          }
+        }
       });
     } else {
       this.audio.pause();
       this.isPlaying = false;
       this.updateUI();
+      
+      // Show paused notification
+      if (window.musicManager) {
+        const currentTrack = window.musicManager.getCurrentTrack();
+        if (currentTrack) {
+          window.musicManager.showNotification(`Paused: ${currentTrack.title}`, 'paused', 0, { persistent: true });
+        }
+      }
     }
   }
 
@@ -240,24 +332,36 @@ class MusicPlayer {
   }
 
   previousTrack() {
-    if (!window.musicManager) return;
+    if (!window.musicManager) {
+      console.warn('Music manager not available');
+      return;
+    }
     
     const prevTrack = window.musicManager.getPreviousTrack();
     if (prevTrack) {
-      window.musicManager.currentTrackIndex = window.musicManager.musicLibrary.findIndex(t => t.id === prevTrack.id);
+      console.log('Playing previous track:', prevTrack.title);
       this.loadTrack(prevTrack);
       this.play();
+    } else {
+      console.warn('No previous track available');
+      this.showNotification('No previous track', 'warning', 2000);
     }
   }
 
   nextTrack() {
-    if (!window.musicManager) return;
+    if (!window.musicManager) {
+      console.warn('Music manager not available');
+      return;
+    }
     
     const nextTrack = window.musicManager.getNextTrack();
     if (nextTrack) {
-      window.musicManager.currentTrackIndex = window.musicManager.musicLibrary.findIndex(t => t.id === nextTrack.id);
+      console.log('Playing next track:', nextTrack.title);
       this.loadTrack(nextTrack);
       this.play();
+    } else {
+      console.warn('No next track available');
+      this.showNotification('No next track', 'warning', 2000);
     }
   }
 
@@ -498,7 +602,36 @@ class MusicPlayer {
 
   onError(event) {
     console.error('Audio error:', event);
-    this.showError('Error playing audio');
+    const error = event.target.error;
+    let errorMessage = 'Error playing audio';
+    
+    if (error) {
+      switch (error.code) {
+        case error.MEDIA_ERR_ABORTED:
+          errorMessage = 'Audio playback was aborted';
+          break;
+        case error.MEDIA_ERR_NETWORK:
+          errorMessage = 'Network error while loading audio';
+          break;
+        case error.MEDIA_ERR_DECODE:
+          errorMessage = 'Audio file is corrupted or unsupported';
+          break;
+        case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+          errorMessage = 'Audio format not supported';
+          break;
+        default:
+          errorMessage = 'Unknown audio error';
+      }
+    }
+    
+    this.showError(errorMessage);
+    
+    // Try to play next track if current fails
+    if (window.musicManager && window.musicManager.settings.autoPlay) {
+      setTimeout(() => {
+        this.nextTrack();
+      }, 2000);
+    }
   }
 
   onTimeUpdate() {

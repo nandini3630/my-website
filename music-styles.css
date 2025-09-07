@@ -498,19 +498,44 @@ body::before {
 }
 
 .music-item {
-  background: var(--bg-secondary);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.8) 0%, rgba(30, 30, 30, 0.8) 100%);
+  border-radius: 16px;
   padding: 20px;
   cursor: pointer;
-  transition: var(--transition);
-  border: 1px solid transparent;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.music-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(29, 185, 84, 0.1) 0%, rgba(255, 77, 126, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
 }
 
 .music-item:hover {
-  background: var(--bg-hover);
-  border-color: var(--border-color);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow);
+  background: linear-gradient(135deg, rgba(50, 50, 50, 0.9) 0%, rgba(40, 40, 40, 0.9) 100%);
+  border-color: rgba(29, 185, 84, 0.3);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(29, 185, 84, 0.2);
+}
+
+.music-item:hover::before {
+  opacity: 1;
+}
+
+.music-item:active {
+  transform: translateY(-3px) scale(0.98);
+  transition: all 0.1s ease;
 }
 
 .music-artwork {
@@ -685,11 +710,11 @@ body::before {
 }
 
 .control-btn {
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 18px;
   padding: 8px;
   border-radius: 50%;
@@ -700,6 +725,7 @@ body::before {
   justify-content: center;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 .control-btn::before {
@@ -718,14 +744,16 @@ body::before {
 
 .control-btn:hover {
   color: var(--text-primary);
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.15);
+  background: rgba(29, 185, 84, 0.2);
+  border-color: var(--accent-green);
+  box-shadow: 0 8px 25px rgba(29, 185, 84, 0.3);
 }
 
 .control-btn:hover::before {
   width: 100%;
   height: 100%;
-  background: rgba(29, 185, 84, 0.1);
+  background: rgba(29, 185, 84, 0.2);
 }
 
 .control-btn.active {
@@ -745,8 +773,8 @@ body::before {
 }
 
 .play-pause-btn {
-  background: var(--text-primary);
-  color: var(--bg-primary);
+  background: linear-gradient(135deg, var(--accent-green) 0%, #1ed760 100%);
+  color: white;
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -754,15 +782,35 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 25px rgba(29, 185, 84, 0.4);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.play-pause-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .play-pause-btn:hover {
-  background: var(--accent-green);
+  background: linear-gradient(135deg, #1ed760 0%, var(--accent-green) 100%);
   color: white;
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+  transform: scale(1.1);
+  box-shadow: 0 12px 35px rgba(29, 185, 84, 0.6);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.play-pause-btn:hover::before {
+  opacity: 1;
 }
 
 .play-pause-btn:active {
@@ -783,36 +831,61 @@ body::before {
 
 .progress-bar {
   flex: 1;
-  height: 6px;
-  background: var(--bg-tertiary);
-  border-radius: 3px;
+  height: 8px;
+  background: linear-gradient(90deg, var(--bg-tertiary) 0%, rgba(255, 255, 255, 0.1) 100%);
+  border-radius: 4px;
   position: relative;
   cursor: pointer;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .progress-fill {
   height: 100%;
-  background: var(--accent-green);
-  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent-green) 0%, #1ed760 50%, var(--accent-green) 100%);
+  background-size: 20px 100%;
+  border-radius: 4px;
   width: 0%;
-  transition: width 0.1s ease;
+  transition: width 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .progress-handle {
   position: absolute;
   top: 50%;
   left: 0%;
-  width: 12px;
-  height: 12px;
-  background: var(--accent-green);
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(135deg, var(--accent-green) 0%, #1ed760 100%);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   opacity: 0;
-  transition: var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 3px solid white;
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
 }
 
 .progress-bar:hover .progress-handle {
   opacity: 1;
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 6px 20px rgba(29, 185, 84, 0.6);
 }
 
 .now-playing-right {
@@ -1110,7 +1183,7 @@ body::before {
   color: var(--text-primary);
 }
 
-/* Beautiful Notification System with Zigzag Progress */
+/* Enhanced Notification System with Mobile Controls */
 .notification-container {
   position: fixed;
   top: 20px;
@@ -1138,6 +1211,11 @@ body::before {
   opacity: 0;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: auto;
+}
+
+.notification.persistent {
+  border-left: 4px solid var(--accent-green);
+  box-shadow: 0 8px 32px rgba(29, 185, 84, 0.3);
 }
 
 .notification.success {
@@ -1188,13 +1266,65 @@ body::before {
   margin-bottom: 12px;
 }
 
-/* Zigzag Progress Bar */
+/* Mobile Music Controls */
+.notification-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 12px 0;
+  padding: 8px 0;
+}
+
+.notification-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.notification-btn:hover {
+  background: rgba(29, 185, 84, 0.2);
+  border-color: var(--accent-green);
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+}
+
+.notification-btn:active {
+  transform: scale(0.95);
+}
+
+.notification-btn.play-pause-btn {
+  background: var(--accent-green);
+  border-color: var(--accent-green);
+  width: 48px;
+  height: 48px;
+  font-size: 18px;
+}
+
+.notification-btn.play-pause-btn:hover {
+  background: var(--accent-green-hover);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+}
+
+/* Enhanced Progress Bar */
 .notification-progress {
   position: relative;
   height: 4px;
   background: var(--bg-tertiary);
   border-radius: 2px;
   overflow: hidden;
+  margin-top: 8px;
 }
 
 .notification-progress::before {
@@ -1214,6 +1344,15 @@ body::before {
   width: 100%;
   transform: translateX(-100%);
   animation: progressBar 5s linear forwards;
+}
+
+.notification.persistent .notification-progress::before {
+  animation: progressBar 0s linear forwards;
+  background: linear-gradient(90deg, 
+    var(--accent-green) 0%, 
+    #1ed760 100%);
+  width: 100%;
+  transform: translateX(0);
 }
 
 @keyframes zigzag {
@@ -1252,15 +1391,30 @@ body::before {
   animation: slideOutRight 0.3s ease forwards;
 }
 
-/* Beautiful Loading Animation */
+/* Enhanced Loading Animations */
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
 }
 
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(29, 185, 84, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(29, 185, 84, 0.6); }
+}
+
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(4); opacity: 0; }
 }
 
 .loading-shimmer {
@@ -1277,6 +1431,36 @@ body::before {
   bottom: 0;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   animation: shimmer 1.5s infinite;
+}
+
+.music-item.loading {
+  animation: pulse 2s infinite;
+}
+
+.music-item.loading .music-artwork {
+  animation: float 3s ease-in-out infinite;
+}
+
+.control-btn.loading {
+  animation: glow 2s infinite;
+}
+
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(29, 185, 84, 0.3);
+  transform: translate(-50%, -50%);
+  animation: ripple 0.6s ease-out;
 }
 
 /* Enhanced Scrollbar */
@@ -1317,9 +1501,13 @@ button:active {
   user-select: none;
 }
 
-/* Smooth transitions for all interactive elements */
+/* Enhanced smooth transitions for all interactive elements */
 * {
-  transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Prevent double-tap zoom on mobile */
@@ -1350,7 +1538,7 @@ button:active {
     --sidebar-width: 0px;
   }
   
-  /* Mobile Notifications */
+  /* Mobile Notifications - Enhanced */
   .notification-container {
     top: 10px;
     right: 10px;
@@ -1364,21 +1552,87 @@ button:active {
     padding: 20px;
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    background: linear-gradient(135deg, rgba(18, 18, 18, 0.98), rgba(24, 24, 24, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  .notification.persistent {
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.1), rgba(18, 18, 18, 0.98));
+    border-left: 4px solid var(--accent-green);
+    box-shadow: 0 10px 40px rgba(29, 185, 84, 0.3);
   }
   
   .notification-title {
     font-size: 16px;
     font-weight: 700;
+    color: var(--text-primary);
   }
   
   .notification-message {
     font-size: 14px;
     margin-top: 8px;
+    color: var(--text-secondary);
   }
   
   .notification-close {
     font-size: 20px;
     padding: 8px;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+  }
+  
+  .notification-close:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+  
+  .notification-controls {
+    gap: 20px;
+    margin: 15px 0;
+    padding: 10px 0;
+  }
+  
+  .notification-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+  }
+  
+  .notification-btn:hover {
+    background: rgba(29, 185, 84, 0.2);
+    border-color: var(--accent-green);
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+  }
+  
+  .notification-btn:active {
+    transform: scale(0.95);
+  }
+  
+  .notification-btn.play-pause-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: white;
+  }
+  
+  .notification-btn.play-pause-btn:hover {
+    background: var(--accent-green-hover);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
   }
   
   .mobile-menu-btn {
@@ -2041,23 +2295,59 @@ button:active {
   }
 }
 
-/* Animations */
+/* Enhanced Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(30px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes slideIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .music-item {
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.music-item:nth-child(1) { animation-delay: 0.1s; }
+.music-item:nth-child(2) { animation-delay: 0.2s; }
+.music-item:nth-child(3) { animation-delay: 0.3s; }
+.music-item:nth-child(4) { animation-delay: 0.4s; }
+.music-item:nth-child(5) { animation-delay: 0.5s; }
+.music-item:nth-child(6) { animation-delay: 0.6s; }
+
 .queue-sidebar.open {
-  animation: slideIn 0.3s ease;
+  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar.open {
+  animation: slideInLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal.open .modal-content {
+  animation: bounceIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification {
+  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Loading States */

@@ -13,8 +13,15 @@ class MusicManager {
 
   async init() {
     console.log('Initializing Music Manager...');
+    
+    // Load user data first
+    this.loadUserData();
+    
+    // Load music library
     await this.loadMusicLibrary();
     console.log('Music library loaded:', this.musicLibrary.length, 'songs');
+    
+    // Setup everything
     this.setupEventListeners();
     this.renderMusicGrid();
     this.buildSearchIndex();
@@ -75,13 +82,29 @@ class MusicManager {
   createDefaultLibrary() {
     this.musicLibrary = [
       {
+        id: 'na_jatta_na',
         title: 'Na Jatta Na',
         artist: 'Unknown Artist',
         duration: '3:45',
         file: 'assets/audio/na_jatta_na.mp3',
         artwork: 'assets/images/music-placeholder.jpg'
+      },
+      {
+        id: 'blender',
+        title: 'Blender',
+        artist: 'Your Artist',
+        duration: '4:12',
+        file: 'assets/audio/Blender.mp3',
+        artwork: 'assets/images/music-placeholder.jpg'
       }
     ];
+    
+    // Add IDs to existing tracks if they don't have them
+    this.musicLibrary.forEach((track, index) => {
+      if (!track.id) {
+        track.id = `track_${index}_${Date.now()}`;
+      }
+    });
   }
 
 
@@ -158,42 +181,101 @@ class MusicManager {
     return null;
   }
 
-  // Set current track
+  // Set current track with validation
   setCurrentTrack(index) {
     if (index >= 0 && index < this.musicLibrary.length) {
       this.currentTrackIndex = index;
       const track = this.musicLibrary[index];
-      this.addToRecentlyPlayed(track);
-      this.incrementPlayCount(track.id);
-      return track;
+      if (track) {
+        this.addToRecentlyPlayed(track);
+        this.incrementPlayCount(track.id);
+        return track;
+      }
     }
+    console.warn('Invalid track index:', index);
     return null;
   }
+  
+  // Add to recently played
+  addToRecentlyPlayed(track) {
+    if (!this.recentlyPlayed) {
+      this.recentlyPlayed = [];
+    }
+    
+    // Remove if already exists
+    this.recentlyPlayed = this.recentlyPlayed.filter(t => t.id !== track.id);
+    
+    // Add to beginning
+    this.recentlyPlayed.unshift(track);
+    
+    // Keep only last 20
+    this.recentlyPlayed = this.recentlyPlayed.slice(0, 20);
+  }
+  
+  // Increment play count
+  incrementPlayCount(trackId) {
+    if (!this.playCounts) {
+      this.playCounts = {};
+    }
+    this.playCounts[trackId] = (this.playCounts[trackId] || 0) + 1;
+  }
 
-  // Get next track
+  // Get next track with proper error handling
   getNextTrack() {
+    if (this.musicLibrary.length === 0) {
+      console.warn('No tracks in library');
+      return null;
+    }
+    
     if (this.isShuffled && this.shuffledIndices.length > 0) {
       const currentShuffledIndex = this.shuffledIndices.indexOf(this.currentTrackIndex);
       const nextShuffledIndex = (currentShuffledIndex + 1) % this.shuffledIndices.length;
-      return this.musicLibrary[this.shuffledIndices[nextShuffledIndex]];
+      const track = this.musicLibrary[this.shuffledIndices[nextShuffledIndex]];
+      if (track) {
+        this.currentTrackIndex = this.shuffledIndices[nextShuffledIndex];
+        return track;
+      }
     } else {
       const nextIndex = (this.currentTrackIndex + 1) % this.musicLibrary.length;
-      return this.musicLibrary[nextIndex];
+      const track = this.musicLibrary[nextIndex];
+      if (track) {
+        this.currentTrackIndex = nextIndex;
+        return track;
+      }
     }
+    
+    console.warn('No next track available');
+    return null;
   }
 
-  // Get previous track
+  // Get previous track with proper error handling
   getPreviousTrack() {
+    if (this.musicLibrary.length === 0) {
+      console.warn('No tracks in library');
+      return null;
+    }
+    
     if (this.isShuffled && this.shuffledIndices.length > 0) {
       const currentShuffledIndex = this.shuffledIndices.indexOf(this.currentTrackIndex);
       const prevShuffledIndex = currentShuffledIndex === 0 ? 
         this.shuffledIndices.length - 1 : currentShuffledIndex - 1;
-      return this.musicLibrary[this.shuffledIndices[prevShuffledIndex]];
+      const track = this.musicLibrary[this.shuffledIndices[prevShuffledIndex]];
+      if (track) {
+        this.currentTrackIndex = this.shuffledIndices[prevShuffledIndex];
+        return track;
+      }
     } else {
       const prevIndex = this.currentTrackIndex === 0 ? 
         this.musicLibrary.length - 1 : this.currentTrackIndex - 1;
-      return this.musicLibrary[prevIndex];
+      const track = this.musicLibrary[prevIndex];
+      if (track) {
+        this.currentTrackIndex = prevIndex;
+        return track;
+      }
     }
+    
+    console.warn('No previous track available');
+    return null;
   }
 
   // Shuffle management
@@ -203,6 +285,11 @@ class MusicManager {
       this.generateShuffledIndices();
     }
     this.saveUserData();
+    
+    // Show notification
+    const message = this.isShuffled ? 'Shuffle enabled' : 'Shuffle disabled';
+    this.showNotification(message, 'info', 2000);
+    
     return this.isShuffled;
   }
 
@@ -218,6 +305,11 @@ class MusicManager {
   toggleRepeat() {
     this.isRepeating = !this.isRepeating;
     this.saveUserData();
+    
+    // Show notification
+    const message = this.isRepeating ? 'Repeat enabled' : 'Repeat disabled';
+    this.showNotification(message, 'info', 2000);
+    
     return this.isRepeating;
   }
 
@@ -229,7 +321,10 @@ class MusicManager {
       crossfadeDuration: 3,
       autoPlay: true,
       showNotifications: true,
-      theme: 'dark'
+      theme: 'dark',
+      fadeInOut: true,
+      pauseOnCall: true,
+      lowerOnNotification: true
     };
 
     try {
@@ -246,6 +341,55 @@ class MusicManager {
       localStorage.setItem('musicSettings', JSON.stringify(this.settings));
     } catch (error) {
       console.error('Error saving settings:', error);
+    }
+  }
+  
+  saveSettingsToStorage() {
+    this.saveSettings();
+  }
+  
+  saveUserData() {
+    try {
+      const userData = {
+        recentlyPlayed: this.recentlyPlayed || [],
+        playCounts: this.playCounts || {},
+        isShuffled: this.isShuffled,
+        isRepeating: this.isRepeating,
+        currentTrackIndex: this.currentTrackIndex
+      };
+      localStorage.setItem('musicUserData', JSON.stringify(userData));
+    } catch (error) {
+      console.error('Error saving user data:', error);
+    }
+  }
+  
+  loadUserData() {
+    try {
+      const saved = localStorage.getItem('musicUserData');
+      if (saved) {
+        const userData = JSON.parse(saved);
+        this.recentlyPlayed = userData.recentlyPlayed || [];
+        this.playCounts = userData.playCounts || {};
+        this.isShuffled = userData.isShuffled || false;
+        this.isRepeating = userData.isRepeating || false;
+        this.currentTrackIndex = userData.currentTrackIndex || -1;
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  }
+  
+  saveMusicLibrary() {
+    try {
+      const libraryData = {
+        songs: this.musicLibrary,
+        settings: {
+          defaultArtwork: 'assets/images/music-placeholder.jpg'
+        }
+      };
+      localStorage.setItem('musicLibrary', JSON.stringify(libraryData));
+    } catch (error) {
+      console.error('Error saving music library:', error);
     }
   }
 
@@ -293,7 +437,7 @@ class MusicManager {
   }
 
   setupMusicItemEvents() {
-    // Simple and reliable event handling
+    // Enhanced event handling with better error management
     const musicGrid = document.getElementById('musicGrid');
     if (!musicGrid) return;
 
@@ -311,6 +455,15 @@ class MusicManager {
       
       if (!song) {
         console.error('Song not found at index:', songIndex);
+        this.showNotification('Song not found', 'error', 3000);
+        return;
+      }
+      
+      // Check if file exists
+      const fileExists = await this.checkFileExists(song.file);
+      if (!fileExists) {
+        console.error('Audio file not found:', song.file);
+        this.showNotification(`Audio file not found: ${song.title}`, 'error', 4000);
         return;
       }
       
@@ -328,16 +481,56 @@ class MusicManager {
         try {
           await window.musicPlayer.playSong(song);
           console.log('Song playing successfully');
-          this.showNotification(`Now playing: ${song.title}`, 'success', 3000);
+          this.showNotification(`Now playing: ${song.title}`, 'playing', 0, { persistent: true });
         } catch (error) {
           console.error('Error playing song:', error);
-          this.showNotification('Failed to play song', 'error', 4000);
+          this.showNotification(`Failed to play: ${song.title}`, 'error', 4000);
         }
       } else {
         console.error('Music player not available after waiting');
         this.showNotification('Music player not ready', 'error', 4000);
       }
     });
+  }
+  
+  // Check if audio file exists
+  async checkFileExists(filePath) {
+    if (!filePath) return false;
+    
+    // Use error handler if available
+    if (window.musicErrorHandler) {
+      return await window.musicErrorHandler.checkFileExists(filePath);
+    }
+    
+    // Fallback validation
+    return window.musicErrorHandler?.validateAudioFile(filePath) || 
+           filePath.includes('.mp3');
+  }
+  
+  // Enhanced track playing with better error handling
+  async playTrack(track) {
+    if (!track) {
+      this.showNotification('No track selected', 'error', 3000);
+      return;
+    }
+    
+    const fileExists = await this.checkFileExists(track.file);
+    if (!fileExists) {
+      this.showNotification(`Audio file not found: ${track.title}`, 'error', 4000);
+      return;
+    }
+    
+    this.currentTrackIndex = this.musicLibrary.findIndex(t => t.id === track.id || t.title === track.title);
+    
+    if (window.musicPlayer) {
+      try {
+        await window.musicPlayer.playSong(track);
+        this.showNotification(`Now playing: ${track.title}`, 'playing', 0, { persistent: true });
+      } catch (error) {
+        console.error('Error playing track:', error);
+        this.showNotification(`Failed to play: ${track.title}`, 'error', 4000);
+      }
+    }
   }
 
   setupEventListeners() {
@@ -376,39 +569,80 @@ class MusicManager {
     return this.musicLibrary;
   }
 
-  // Beautiful notification system
-  showNotification(message, type = 'info', duration = 3000) {
+  // Enhanced notification system with mobile controls
+  showNotification(message, type = 'info', duration = 3000, options = {}) {
     const container = document.getElementById('notificationContainer');
     if (!container) return;
 
     const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
+    notification.className = `notification ${type} ${options.persistent ? 'persistent' : ''}`;
     
     const icons = {
       success: '🎵',
       error: '❌',
       info: 'ℹ️',
-      warning: '⚠️'
+      warning: '⚠️',
+      playing: '▶️',
+      paused: '⏸️'
     };
 
     // Check if mobile
     const isMobile = window.innerWidth <= 768;
+    const currentTrack = this.getCurrentTrack();
     
-    if (isMobile) {
-      // Mobile-optimized notification
+    if (isMobile && (type === 'playing' || type === 'paused') && currentTrack) {
+      // Mobile music notification with controls - matching your design
       notification.innerHTML = `
         <div class="notification-header">
           <div class="notification-title">${icons[type] || icons.info} Our Music</div>
           <button class="notification-close">×</button>
         </div>
         <div class="notification-message">${message}</div>
+        <div class="notification-controls">
+          <button class="notification-btn prev-btn" title="Previous">⏮</button>
+          <button class="notification-btn play-pause-btn" title="Play/Pause">${window.musicPlayer?.isPlaying ? '⏸' : '▶'}</button>
+          <button class="notification-btn next-btn" title="Next">⏭</button>
+        </div>
         <div class="notification-progress"></div>
       `;
+      
+      // Add control functionality
+      const prevBtn = notification.querySelector('.prev-btn');
+      const playPauseBtn = notification.querySelector('.play-pause-btn');
+      const nextBtn = notification.querySelector('.next-btn');
+      
+      prevBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.musicPlayer) {
+          window.musicPlayer.previousTrack();
+          this.updateNotificationControls(notification);
+        }
+      });
+      
+      playPauseBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.musicPlayer) {
+          window.musicPlayer.togglePlayPause();
+          this.updateNotificationControls(notification);
+        }
+      });
+      
+      nextBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.musicPlayer) {
+          window.musicPlayer.nextTrack();
+          this.updateNotificationControls(notification);
+        }
+      });
+      
+      // Make notification persistent for music controls
+      notification.classList.add('persistent');
+      duration = 0; // Don't auto-remove music notifications
     } else {
-      // Desktop notification
+      // Regular notification
       notification.innerHTML = `
         <div class="notification-header">
-          <div class="notification-title">${icons[type] || icons.info} ${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+          <div class="notification-title">${icons[type] || icons.info} Our Music</div>
           <button class="notification-close">×</button>
         </div>
         <div class="notification-message">${message}</div>
@@ -422,10 +656,13 @@ class MusicManager {
       this.removeNotification(notification);
     });
 
-    // Auto remove after duration
-    const autoRemoveTimer = setTimeout(() => {
-      this.removeNotification(notification);
-    }, duration);
+    // Auto remove after duration (unless persistent)
+    let autoRemoveTimer = null;
+    if (duration > 0) {
+      autoRemoveTimer = setTimeout(() => {
+        this.removeNotification(notification);
+      }, duration);
+    }
 
     // Store timer reference for manual close
     notification.autoRemoveTimer = autoRemoveTimer;
@@ -437,6 +674,15 @@ class MusicManager {
       notification.style.transform = 'translateX(0)';
       notification.style.opacity = '1';
     }, 10);
+    
+    return notification;
+  }
+  
+  updateNotificationControls(notification) {
+    const playPauseBtn = notification.querySelector('.play-pause-btn');
+    if (playPauseBtn && window.musicPlayer) {
+      playPauseBtn.textContent = window.musicPlayer.isPlaying ? '⏸' : '▶';
+    }
   }
 
   removeNotification(notification) {
