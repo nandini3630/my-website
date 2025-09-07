@@ -3,7 +3,7 @@ class MusicSecurityManager {
   constructor() {
     this.isAuthenticated = false;
     this.sessionStartTime = null;
-    this.sessionTimeout = 60 * 60 * 1000; // 10 minutes
+    this.sessionTimeout = 600 * 600 * 1000;
     this.timeoutTimer = null;
     this.musicPassword = 'music2024'; // Independent password
     this.init();
