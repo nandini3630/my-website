@@ -2,11 +2,6 @@
 class MusicManager {
   constructor() {
     this.musicLibrary = [];
-    this.artists = new Map();
-    this.albums = new Map();
-    this.genres = new Map();
-    this.favorites = new Set();
-    this.recentlyPlayed = [];
     this.searchIndex = new Map();
     this.currentTrackIndex = -1;
     this.isShuffled = false;
@@ -17,11 +12,42 @@ class MusicManager {
   }
 
   async init() {
+    console.log('Initializing Music Manager...');
     await this.loadMusicLibrary();
+    console.log('Music library loaded:', this.musicLibrary.length, 'songs');
     this.setupEventListeners();
     this.renderMusicGrid();
-    this.loadUserData();
     this.buildSearchIndex();
+    
+    // Wait for music player to be ready
+    await this.waitForMusicPlayer();
+  }
+
+  async waitForMusicPlayer() {
+    return new Promise((resolve) => {
+      if (window.musicPlayer) {
+        console.log('Music player ready');
+        resolve();
+        return;
+      }
+      
+      const checkPlayer = setInterval(() => {
+        if (window.musicPlayer) {
+          console.log('Music player ready');
+          clearInterval(checkPlayer);
+          resolve();
+        }
+      }, 100);
+      
+      // Timeout after 5 seconds
+      setTimeout(() => {
+        clearInterval(checkPlayer);
+        if (!window.musicPlayer) {
+          console.error('Music player failed to load');
+        }
+        resolve();
+      }, 5000);
+    });
   }
 
   async loadMusicLibrary() {
@@ -29,8 +55,7 @@ class MusicManager {
       const response = await fetch('data/music-library.json');
       if (response.ok) {
         const data = await response.json();
-        this.musicLibrary = data.library.songs || [];
-        this.organizeLibrary();
+        this.musicLibrary = data.songs || [];
         console.log(`Loaded ${this.musicLibrary.length} songs from library`);
       } else {
         console.warn('Music library file not found, using default tracks');
@@ -45,59 +70,22 @@ class MusicManager {
   createDefaultLibrary() {
     this.musicLibrary = [
       {
-        id: 'default_001',
-        title: 'Our Song',
+        title: 'Na Jatta Na',
         artist: 'Unknown Artist',
-        album: 'Love Collection',
         duration: '3:45',
-        file: 'assets/audio/our-song.mp3',
-        artwork: 'assets/images/music-placeholder.jpg',
-        genre: 'Love',
-        year: '2024',
-        favorite: false,
-        playCount: 0,
-        lastPlayed: null
+        file: 'assets/audio/na_jatta_na.mp3',
+        artwork: 'assets/images/music-placeholder.jpg'
       }
     ];
-    this.organizeLibrary();
   }
 
-  organizeLibrary() {
-    // Organize by artists, albums, and genres
-    this.artists.clear();
-    this.albums.clear();
-    this.genres.clear();
-
-    this.musicLibrary.forEach(song => {
-      // Organize artists
-      if (!this.artists.has(song.artist)) {
-        this.artists.set(song.artist, []);
-      }
-      this.artists.get(song.artist).push(song);
-
-      // Organize albums
-      const albumKey = `${song.artist} - ${song.album}`;
-      if (!this.albums.has(albumKey)) {
-        this.albums.set(albumKey, []);
-      }
-      this.albums.get(albumKey).push(song);
-
-      // Organize genres
-      if (!this.genres.has(song.genre)) {
-        this.genres.set(song.genre, []);
-      }
-      this.genres.get(song.genre).push(song);
-    });
-  }
 
   buildSearchIndex() {
     this.searchIndex.clear();
     this.musicLibrary.forEach((song, index) => {
       const searchTerms = [
-        song.title.toLowerCase(),
-        song.artist.toLowerCase(),
-        song.album.toLowerCase(),
-        song.genre.toLowerCase()
+        (song.title || '').toLowerCase(),
+        (song.artist || '').toLowerCase()
       ].join(' ');
       
       // Create index for each word
@@ -147,87 +135,14 @@ class MusicManager {
     return Array.from(results);
   }
 
-  // Favorites management
-  toggleFavorite(songId) {
-    if (this.favorites.has(songId)) {
-      this.favorites.delete(songId);
-    } else {
-      this.favorites.add(songId);
-    }
-    this.saveUserData();
-    return this.favorites.has(songId);
-  }
 
-  getFavorites() {
-    return this.musicLibrary.filter(song => this.favorites.has(song.id));
-  }
 
-  // Recently played management
-  addToRecentlyPlayed(song) {
-    // Remove if already exists
-    this.recentlyPlayed = this.recentlyPlayed.filter(s => s.id !== song.id);
-    // Add to beginning
-    this.recentlyPlayed.unshift(song);
-    // Keep only last 20
-    this.recentlyPlayed = this.recentlyPlayed.slice(0, 20);
-    this.saveUserData();
-  }
 
-  getRecentlyPlayed() {
-    return this.recentlyPlayed;
-  }
 
-  // Play count tracking
-  incrementPlayCount(songId) {
-    const song = this.musicLibrary.find(s => s.id === songId);
-    if (song) {
-      song.playCount = (song.playCount || 0) + 1;
-      song.lastPlayed = new Date().toISOString();
-      this.saveUserData();
-    }
-  }
 
-  // Get most played songs
-  getMostPlayed() {
-    return this.musicLibrary
-      .filter(song => song.playCount > 0)
-      .sort((a, b) => (b.playCount || 0) - (a.playCount || 0))
-      .slice(0, 20);
-  }
-
-  // Get songs by artist
-  getSongsByArtist(artist) {
-    return this.artists.get(artist) || [];
-  }
-
-  // Get songs by album
-  getSongsByAlbum(albumKey) {
-    return this.albums.get(albumKey) || [];
-  }
-
-  // Get songs by genre
-  getSongsByGenre(genre) {
-    return this.genres.get(genre) || [];
-  }
-
-  // Get all artists
-  getAllArtists() {
-    return Array.from(this.artists.keys()).sort();
-  }
-
-  // Get all albums
-  getAllAlbums() {
-    return Array.from(this.albums.keys()).sort();
-  }
-
-  // Get all genres
-  getAllGenres() {
-    return Array.from(this.genres.keys()).sort();
-  }
-
-  // Get song by ID
-  getSongById(id) {
-    return this.musicLibrary.find(song => song.id === id);
+  // Get song by title
+  getSongByTitle(title) {
+    return this.musicLibrary.find(song => song.title === title);
   }
 
   // Get current track
@@ -330,30 +245,6 @@ class MusicManager {
   }
 
   // User data management
-  loadUserData() {
-    try {
-      const savedFavorites = localStorage.getItem('musicFavorites');
-      if (savedFavorites) {
-        this.favorites = new Set(JSON.parse(savedFavorites));
-      }
-
-      const savedRecent = localStorage.getItem('musicRecentlyPlayed');
-      if (savedRecent) {
-        this.recentlyPlayed = JSON.parse(savedRecent);
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
-  }
-
-  saveUserData() {
-    try {
-      localStorage.setItem('musicFavorites', JSON.stringify([...this.favorites]));
-      localStorage.setItem('musicRecentlyPlayed', JSON.stringify(this.recentlyPlayed));
-    } catch (error) {
-      console.error('Error saving user data:', error);
-    }
-  }
 
   // Render music grid
   renderMusicGrid(songs = null) {
@@ -373,12 +264,14 @@ class MusicManager {
       return;
     }
 
-    grid.innerHTML = songsToRender.map(song => `
-      <div class="music-item" data-song-id="${song.id}">
+    grid.innerHTML = songsToRender.map((song, index) => `
+      <div class="music-item" data-song-index="${index}">
         <div class="music-artwork">
-          <img src="${song.artwork}" alt="${song.title}" onerror="this.src='assets/images/music-placeholder.jpg'">
+          <div class="artwork-placeholder">
+            <span class="placeholder-icon">🎵</span>
+          </div>
           <div class="play-overlay">
-            <button class="play-btn" data-song-id="${song.id}">▶</button>
+            <button class="play-btn" data-song-index="${index}">▶</button>
           </div>
         </div>
         <div class="music-info">
@@ -386,10 +279,6 @@ class MusicManager {
           <p class="music-artist">${song.artist}</p>
           <div class="music-meta">
             <span class="music-duration">${song.duration}</span>
-            <button class="favorite-btn ${this.favorites.has(song.id) ? 'favorited' : ''}" 
-                    data-song-id="${song.id}" title="Add to favorites">
-              ${this.favorites.has(song.id) ? '❤️' : '🤍'}
-            </button>
           </div>
         </div>
       </div>
@@ -399,37 +288,75 @@ class MusicManager {
   }
 
   setupMusicItemEvents() {
-    // Play button events
+    // Remove existing event listeners to prevent duplicates
     document.querySelectorAll('.play-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const songId = btn.dataset.songId;
-        const song = this.getSongById(songId);
-        if (song && window.musicPlayer) {
-          window.musicPlayer.playSong(song);
-        }
-      });
+      btn.replaceWith(btn.cloneNode(true));
+    });
+    
+    document.querySelectorAll('.music-item').forEach(item => {
+      item.replaceWith(item.cloneNode(true));
     });
 
-    // Favorite button events
-    document.querySelectorAll('.favorite-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    // Play button events
+    document.querySelectorAll('.play-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        const songId = btn.dataset.songId;
-        const isFavorited = this.toggleFavorite(songId);
-        btn.textContent = isFavorited ? '❤️' : '🤍';
-        btn.classList.toggle('favorited', isFavorited);
+        e.preventDefault();
+        const songIndex = parseInt(btn.dataset.songIndex);
+        const song = this.musicLibrary[songIndex];
+        console.log('Play button clicked:', song);
+        
+        if (song) {
+          this.currentTrackIndex = songIndex;
+          
+          // Wait for music player if not ready
+          if (!window.musicPlayer) {
+            console.log('Waiting for music player...');
+            await this.waitForMusicPlayer();
+          }
+          
+          if (window.musicPlayer) {
+            try {
+              await window.musicPlayer.playSong(song);
+              console.log('Song playing successfully');
+            } catch (error) {
+              console.error('Error playing song:', error);
+            }
+          } else {
+            console.error('Music player not available after waiting');
+          }
+        }
       });
     });
 
     // Music item click events
     document.querySelectorAll('.music-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        if (!e.target.closest('.play-btn') && !e.target.closest('.favorite-btn')) {
-          const songId = item.dataset.songId;
-          const song = this.getSongById(songId);
-          if (song && window.musicPlayer) {
-            window.musicPlayer.playSong(song);
+      item.addEventListener('click', async (e) => {
+        if (!e.target.closest('.play-btn')) {
+          e.preventDefault();
+          const songIndex = parseInt(item.dataset.songIndex);
+          const song = this.musicLibrary[songIndex];
+          console.log('Music item clicked:', song);
+          
+          if (song) {
+            this.currentTrackIndex = songIndex;
+            
+            // Wait for music player if not ready
+            if (!window.musicPlayer) {
+              console.log('Waiting for music player...');
+              await this.waitForMusicPlayer();
+            }
+            
+            if (window.musicPlayer) {
+              try {
+                await window.musicPlayer.playSong(song);
+                console.log('Song playing successfully');
+              } catch (error) {
+                console.error('Error playing song:', error);
+              }
+            } else {
+              console.error('Music player not available after waiting');
+            }
           }
         }
       });
@@ -457,27 +384,8 @@ class MusicManager {
   }
 
   applyFilter(filter) {
-    let filteredSongs = [];
-
-    switch (filter) {
-      case 'all':
-        filteredSongs = this.musicLibrary;
-        break;
-      case 'favorites':
-        filteredSongs = this.getFavorites();
-        break;
-      case 'recent':
-        filteredSongs = this.getRecentlyPlayed();
-        break;
-      case 'most-played':
-        filteredSongs = this.getMostPlayed();
-        break;
-      default:
-        filteredSongs = this.musicLibrary;
-    }
-
-    this.renderMusicGrid(filteredSongs);
-    this.updateFilterButtons(filter);
+    // Since we only have songs now, just show all
+    this.renderMusicGrid(this.musicLibrary);
   }
 
   updateFilterButtons(activeFilter) {

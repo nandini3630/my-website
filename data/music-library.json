@@ -1,120 +1,28 @@
 {
-  "library": {
-    "songs": [
-      {
-        "id": "song_001",
-        "title": "Our Song",
-        "artist": "Unknown Artist",
-        "album": "Love Collection",
-        "duration": "3:45",
-        "file": "assets/audio/our-song.mp3",
-        "artwork": "assets/images/album-artwork/our-song.jpg",
-        "genre": "Love",
-        "year": "2024",
-        "favorite": false,
-        "playCount": 0,
-        "lastPlayed": null
-      },
-      {
-        "id": "song_002", 
-        "title": "Love Song",
-        "artist": "Your Artist",
-        "album": "Romantic Vibes",
-        "duration": "4:12",
-        "file": "assets/audio/love-song.mp3",
-        "artwork": "assets/images/album-artwork/love-song.jpg",
-        "genre": "Romantic",
-        "year": "2024",
-        "favorite": false,
-        "playCount": 0,
-        "lastPlayed": null
-      },
-      {
-        "id": "song_003",
-        "title": "Memories",
-        "artist": "Special Someone",
-        "album": "Together Forever",
-        "duration": "3:28",
-        "file": "assets/audio/memories.mp3",
-        "artwork": "assets/images/album-artwork/memories.jpg",
-        "genre": "Pop",
-        "year": "2024",
-        "favorite": false,
-        "playCount": 0,
-        "lastPlayed": null
-      }
-    ],
-    "artists": [
-      {
-        "name": "Unknown Artist",
-        "songCount": 1,
-        "albums": ["Love Collection"]
-      },
-      {
-        "name": "Your Artist", 
-        "songCount": 1,
-        "albums": ["Romantic Vibes"]
-      },
-      {
-        "name": "Special Someone",
-        "songCount": 1,
-        "albums": ["Together Forever"]
-      }
-    ],
-    "albums": [
-      {
-        "name": "Love Collection",
-        "artist": "Unknown Artist",
-        "songCount": 1,
-        "year": "2024",
-        "artwork": "assets/images/album-artwork/our-song.jpg"
-      },
-      {
-        "name": "Romantic Vibes",
-        "artist": "Your Artist",
-        "songCount": 1,
-        "year": "2024",
-        "artwork": "assets/images/album-artwork/love-song.jpg"
-      },
-      {
-        "name": "Together Forever",
-        "artist": "Special Someone",
-        "songCount": 1,
-        "year": "2024",
-        "artwork": "assets/images/album-artwork/memories.jpg"
-      }
-    ],
-    "genres": [
-      {
-        "name": "Love",
-        "songCount": 1,
-        "color": "#ff4d7e"
-      },
-      {
-        "name": "Romantic",
-        "songCount": 1,
-        "color": "#7c5cff"
-      },
-      {
-        "name": "Pop",
-        "songCount": 1,
-        "color": "#1db954"
-      }
-    ]
-  },
+  "songs": [
+    {
+      "title": "Na Jatta Na",
+      "artist": "Unknown Artist",
+      "duration": "3:45",
+      "file": "assets/audio/na_jatta_na.mp3",
+      "artwork": "assets/images/music-placeholder.jpg"
+    },
+    {
+      "title": "Love Song",
+      "artist": "Your Artist",
+      "duration": "4:12",
+      "file": "assets/audio/love-song.mp3",
+      "artwork": "assets/images/music-placeholder.jpg"
+    },
+    {
+      "title": "Memories",
+      "artist": "Special Someone",
+      "duration": "3:28",
+      "file": "assets/audio/memories.mp3",
+      "artwork": "assets/images/music-placeholder.jpg"
+    }
+  ],
   "settings": {
-    "defaultArtwork": "assets/images/music-placeholder.jpg",
-    "audioFormats": ["mp3", "wav", "ogg", "m4a"],
-    "imageFormats": ["jpg", "jpeg", "png", "webp"],
-    "maxFileSize": "50MB",
-    "supportedBrowsers": ["Chrome", "Firefox", "Safari", "Edge"]
-  },
-  "metadata": {
-    "version": "1.0.0",
-    "lastUpdated": "2024-01-01",
-    "totalSongs": 3,
-    "totalArtists": 3,
-    "totalAlbums": 3,
-    "totalGenres": 3
+    "defaultArtwork": "assets/images/music-placeholder.jpg"
   }
 }

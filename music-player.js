@@ -156,14 +156,20 @@ class MusicPlayer {
   }
 
   async loadTrack(track) {
-    if (!track || !this.audio) return;
+    if (!track || !this.audio) {
+      console.error('No track or audio element:', { track, audio: this.audio });
+      return;
+    }
 
     try {
-      this.audio.src = track.src;
+      console.log('Loading track:', track.file);
+      // Use track.file instead of track.src for our simplified structure
+      this.audio.src = track.file;
       this.updateTrackInfo(track);
       
       // Load the audio
       await this.audio.load();
+      console.log('Audio loaded successfully');
       
       // Update duration in library if not set
       if (track.duration === 0 || !track.duration) {
@@ -429,9 +435,21 @@ class MusicPlayer {
     const artistEl = document.getElementById('currentArtist');
     const artworkEl = document.getElementById('currentArtwork');
     
-    if (titleEl) titleEl.textContent = track.title;
-    if (artistEl) artistEl.textContent = track.artist;
-    if (artworkEl) artworkEl.src = track.artwork;
+    if (titleEl) titleEl.textContent = track.title || 'Unknown Title';
+    if (artistEl) artistEl.textContent = track.artist || 'Unknown Artist';
+    if (artworkEl) {
+      // Don't try to load artwork, just show placeholder
+      artworkEl.style.display = 'none';
+      // Create a placeholder if it doesn't exist
+      let placeholder = artworkEl.nextElementSibling;
+      if (!placeholder || !placeholder.classList.contains('artwork-placeholder')) {
+        placeholder = document.createElement('div');
+        placeholder.className = 'artwork-placeholder';
+        placeholder.innerHTML = '<span class="placeholder-icon">🎵</span>';
+        artworkEl.parentNode.insertBefore(placeholder, artworkEl.nextSibling);
+      }
+      placeholder.style.display = 'flex';
+    }
   }
 
   updateUI() {
@@ -582,9 +600,30 @@ class MusicPlayer {
       window.musicManager.showNotification(message, type);
     }
   }
+
+  // Public method to play a song (called from music manager)
+  async playSong(song) {
+    if (!song) {
+      console.error('No song provided to playSong');
+      return;
+    }
+    
+    console.log('Playing song:', song);
+    
+    try {
+      await this.loadTrack(song);
+      await this.play();
+      console.log('Song loaded and playing successfully');
+    } catch (error) {
+      console.error('Error playing song:', error);
+      this.showError('Failed to play song');
+    }
+  }
 }
 
 // Initialize music player when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM loaded, initializing music player...');
   window.musicPlayer = new MusicPlayer();
+  console.log('Music player initialized:', window.musicPlayer);
 });
