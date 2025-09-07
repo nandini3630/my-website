@@ -1120,21 +1120,23 @@ body::before {
   flex-direction: column;
   gap: 10px;
   pointer-events: none;
+  max-width: calc(100vw - 40px);
 }
 
 .notification {
-  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(18, 18, 18, 0.95), rgba(24, 24, 24, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
   padding: 16px 20px;
-  min-width: 300px;
-  max-width: 400px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+  min-width: 280px;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
   position: relative;
   overflow: hidden;
   transform: translateX(100%);
-  animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: auto;
 }
 
@@ -1208,10 +1210,10 @@ body::before {
     #1ed760 75%, 
     var(--accent-green) 100%);
   background-size: 20px 100%;
-  animation: zigzag 1s linear infinite;
+  animation: zigzag 1.5s linear infinite;
   width: 100%;
   transform: translateX(-100%);
-  animation: progressBar 3s linear forwards;
+  animation: progressBar 5s linear forwards;
 }
 
 @keyframes zigzag {
@@ -1307,6 +1309,30 @@ button:active {
   transform: scale(0.95);
 }
 
+/* Prevent text selection on interactive elements */
+.music-item, .control-btn, .play-btn, .notification {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+}
+
+/* Prevent double-tap zoom on mobile */
+.music-item, .control-btn, .play-btn {
+  touch-action: manipulation;
+}
+
+/* Smooth scrolling */
+.content-area {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Beautiful Text Selection */
 ::selection {
   background: var(--accent-green);
@@ -1322,6 +1348,37 @@ button:active {
 @media (max-width: 768px) {
   :root {
     --sidebar-width: 0px;
+  }
+  
+  /* Mobile Notifications */
+  .notification-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+  
+  .notification {
+    min-width: auto;
+    max-width: none;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  }
+  
+  .notification-title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  
+  .notification-message {
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  
+  .notification-close {
+    font-size: 20px;
+    padding: 8px;
   }
   
   .mobile-menu-btn {
@@ -1453,6 +1510,7 @@ button:active {
     -webkit-tap-highlight-color: transparent;
     position: relative;
     overflow: hidden;
+    touch-action: manipulation;
   }
   
   .music-item::before {
@@ -1479,8 +1537,9 @@ button:active {
   }
   
   .music-item:active {
-    transform: translateY(-2px) scale(0.98);
-    background: linear-gradient(135deg, rgba(29, 185, 84, 0.2) 0%, rgba(255, 77, 126, 0.2) 100%);
+    transform: translateY(-2px) scale(0.95);
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.3) 0%, rgba(255, 77, 126, 0.3) 100%);
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
   }
   
   .music-artwork {

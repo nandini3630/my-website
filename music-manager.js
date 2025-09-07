@@ -21,6 +21,11 @@ class MusicManager {
     
     // Wait for music player to be ready
     await this.waitForMusicPlayer();
+    
+    // Test notification
+    setTimeout(() => {
+      this.showNotification('Music app ready!', 'success', 2000);
+    }, 1000);
   }
 
   async waitForMusicPlayer() {
@@ -288,84 +293,50 @@ class MusicManager {
   }
 
   setupMusicItemEvents() {
-    // Remove existing event listeners to prevent duplicates
-    document.querySelectorAll('.play-btn').forEach(btn => {
-      btn.replaceWith(btn.cloneNode(true));
-    });
-    
-    document.querySelectorAll('.music-item').forEach(item => {
-      item.replaceWith(item.cloneNode(true));
-    });
+    // Simple and reliable event handling
+    const musicGrid = document.getElementById('musicGrid');
+    if (!musicGrid) return;
 
-    // Play button events
-    document.querySelectorAll('.play-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        const songIndex = parseInt(btn.dataset.songIndex);
-        const song = this.musicLibrary[songIndex];
-        console.log('Play button clicked:', song);
-        
-        if (song) {
-          this.currentTrackIndex = songIndex;
-          
-          // Wait for music player if not ready
-          if (!window.musicPlayer) {
-            console.log('Waiting for music player...');
-            await this.waitForMusicPlayer();
-          }
-          
-          if (window.musicPlayer) {
-            try {
-              await window.musicPlayer.playSong(song);
-              console.log('Song playing successfully');
-              this.showNotification(`Now playing: ${song.title}`, 'success', 2000);
-            } catch (error) {
-              console.error('Error playing song:', error);
-              this.showNotification('Failed to play song', 'error', 3000);
-            }
-          } else {
-            console.error('Music player not available after waiting');
-            this.showNotification('Music player not ready', 'error', 3000);
-          }
+    // Use event delegation for better performance and reliability
+    musicGrid.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Find the closest music item
+      const musicItem = e.target.closest('.music-item');
+      if (!musicItem) return;
+      
+      const songIndex = parseInt(musicItem.dataset.songIndex);
+      const song = this.musicLibrary[songIndex];
+      
+      if (!song) {
+        console.error('Song not found at index:', songIndex);
+        return;
+      }
+      
+      console.log('Song clicked:', song.title);
+      
+      this.currentTrackIndex = songIndex;
+      
+      // Wait for music player if not ready
+      if (!window.musicPlayer) {
+        console.log('Waiting for music player...');
+        await this.waitForMusicPlayer();
+      }
+      
+      if (window.musicPlayer) {
+        try {
+          await window.musicPlayer.playSong(song);
+          console.log('Song playing successfully');
+          this.showNotification(`Now playing: ${song.title}`, 'success', 3000);
+        } catch (error) {
+          console.error('Error playing song:', error);
+          this.showNotification('Failed to play song', 'error', 4000);
         }
-      });
-    });
-
-    // Music item click events
-    document.querySelectorAll('.music-item').forEach(item => {
-      item.addEventListener('click', async (e) => {
-        if (!e.target.closest('.play-btn')) {
-          e.preventDefault();
-          const songIndex = parseInt(item.dataset.songIndex);
-          const song = this.musicLibrary[songIndex];
-          console.log('Music item clicked:', song);
-          
-          if (song) {
-            this.currentTrackIndex = songIndex;
-            
-            // Wait for music player if not ready
-            if (!window.musicPlayer) {
-              console.log('Waiting for music player...');
-              await this.waitForMusicPlayer();
-            }
-            
-            if (window.musicPlayer) {
-              try {
-                await window.musicPlayer.playSong(song);
-                console.log('Song playing successfully');
-                this.showNotification(`Now playing: ${song.title}`, 'success', 2000);
-              } catch (error) {
-                console.error('Error playing song:', error);
-                this.showNotification('Failed to play song', 'error', 3000);
-              }
-            } else {
-              console.error('Music player not available after waiting');
-              this.showNotification('Music player not ready', 'error', 3000);
-            }
-          }
-        }
-      });
+      } else {
+        console.error('Music player not available after waiting');
+        this.showNotification('Music player not ready', 'error', 4000);
+      }
     });
   }
 
@@ -414,20 +385,36 @@ class MusicManager {
     notification.className = `notification ${type}`;
     
     const icons = {
-      success: '✅',
+      success: '🎵',
       error: '❌',
       info: 'ℹ️',
       warning: '⚠️'
     };
 
-    notification.innerHTML = `
-      <div class="notification-header">
-        <div class="notification-title">${icons[type] || icons.info} ${type.charAt(0).toUpperCase() + type.slice(1)}</div>
-        <button class="notification-close">×</button>
-      </div>
-      <div class="notification-message">${message}</div>
-      <div class="notification-progress"></div>
-    `;
+    // Check if mobile
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+      // Mobile-optimized notification
+      notification.innerHTML = `
+        <div class="notification-header">
+          <div class="notification-title">${icons[type] || icons.info} Our Music</div>
+          <button class="notification-close">×</button>
+        </div>
+        <div class="notification-message">${message}</div>
+        <div class="notification-progress"></div>
+      `;
+    } else {
+      // Desktop notification
+      notification.innerHTML = `
+        <div class="notification-header">
+          <div class="notification-title">${icons[type] || icons.info} ${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+          <button class="notification-close">×</button>
+        </div>
+        <div class="notification-message">${message}</div>
+        <div class="notification-progress"></div>
+      `;
+    }
 
     // Add close functionality
     const closeBtn = notification.querySelector('.notification-close');
@@ -436,33 +423,38 @@ class MusicManager {
     });
 
     // Auto remove after duration
-    setTimeout(() => {
+    const autoRemoveTimer = setTimeout(() => {
       this.removeNotification(notification);
     }, duration);
 
+    // Store timer reference for manual close
+    notification.autoRemoveTimer = autoRemoveTimer;
+
     container.appendChild(notification);
 
-    // Remove after animation
+    // Smooth entrance animation
     setTimeout(() => {
-      if (notification.parentNode) {
-        notification.classList.add('slide-out');
-        setTimeout(() => {
-          if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-          }
-        }, 300);
-      }
-    }, duration - 300);
+      notification.style.transform = 'translateX(0)';
+      notification.style.opacity = '1';
+    }, 10);
   }
 
   removeNotification(notification) {
     if (notification && notification.parentNode) {
-      notification.classList.add('slide-out');
+      // Clear auto-remove timer if manually closed
+      if (notification.autoRemoveTimer) {
+        clearTimeout(notification.autoRemoveTimer);
+      }
+      
+      // Smooth exit animation
+      notification.style.transform = 'translateX(100%)';
+      notification.style.opacity = '0';
+      
       setTimeout(() => {
         if (notification.parentNode) {
           notification.parentNode.removeChild(notification);
         }
-      }, 300);
+      }, 400);
     }
   }
 
